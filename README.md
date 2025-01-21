@@ -96,7 +96,7 @@
 ```
 
 **关键配置说明:**
-- `plugin`: **配置自定义插件。** **`type` 为插件类的完整路径。** `targetPackage` 为包名，`targetProject` 为生成的JAVA文件路径。
+- `plugin`: **配置自定义插件。** **`type` 为插件类的完整路径。** `targetPackage` 为包名，`value` 值指定所生成的JAVA文件路径。
 - `jdbcConnection`: 数据库连接信息。
 - `javaModelGenerator`: `Model` 类生成路径。`targetPackage` 为包名，`targetProject` 为项目路径。
 - `sqlMapGenerator`: Mapper XML 文件生成路径。

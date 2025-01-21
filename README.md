@@ -8,7 +8,7 @@
 
 ```xml
 	<dependencies>
-    ······
+    <!-- ······ -->
 
     <dependency>
         <groupId>org.mybatis.generator</groupId>
@@ -16,13 +16,13 @@
         <version>1.4.2</version> 
     </dependency>
 
-    ·······
+    <!-- ······· -->
 	</dependencies>
 
 	<build>
     <plugins>
 
-       ·······
+       <!-- ······· -->
 
         <plugin>
           <groupId>org.mybatis.generator</groupId>
@@ -37,7 +37,7 @@
 					</dependencies>
         </plugin>
 
-         ·······
+        <!--  ······· -->
 
       </plugins>
 	</build>
@@ -96,12 +96,12 @@
 ```
 
 **关键配置说明:**
-`jdbcConnection`: 数据库连接信息。
-`javaModelGenerator`: `Model` 类生成路径。`targetPackage` 为包名，`targetProject` 为项目路径。
-`sqlMapGenerator`: Mapper XML 文件生成路径。
-`javaClientGenerator`: Mapper 接口生成路径。
-`table`: 配置要生成的表，`tableName` 为数据库表名，`domainObjectName` 为生成的 `Java` 类名。
-`plugin`: 配置自定义插件。`type` 为插件类的完整路径。
+- `jdbcConnection`: 数据库连接信息。
+- `javaModelGenerator`: `Model` 类生成路径。`targetPackage` 为包名，`targetProject` 为项目路径。
+- `sqlMapGenerator`: Mapper XML 文件生成路径。
+- `javaClientGenerator`: Mapper 接口生成路径。
+- `table`: 配置要生成的表，`tableName` 为数据库表名，`domainObjectName` 为生成的 `Java` 类名。
+- `plugin`: **配置自定义插件。** **`type` 为插件类的完整路径。**
 
 
 ## 自定义插件 (CustomizedPlugin.java)
@@ -197,7 +197,8 @@ public class CustomizedPlugin extends PluginAdapter {
 
 ## 运行 CustomizedPlugin
 编译并运行`CustomizedPlugin.java`类。
-使用以下命令：
+
+或者，使用以下命令：
 ```bash
 cd /home/linux/SpringProjects/custom_plugin 
 java @/tmp/cp_9s0clmxkxqh6n0bpcpyy27dvz.argfile com.example.custom_plugin.plugin.CustomizedPlugin

@@ -21,23 +21,23 @@
         </jdbcConnection>
 
         <!-- Java Model -->
-        <javaModelGenerator targetPackage="com.example.buddy_match.model" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.example.custom_plugin.model" targetProject="src/main/java">
           <property name="enableSubPackages" value="true" />
           <property name="trimStrings" value="true" />
         </javaModelGenerator>
 
         <!-- SQL Map -->
-        <sqlMapGenerator targetPackage="com.example.buddy_match.mapper" targetProject="src/main/resources">
+        <sqlMapGenerator targetPackage="com.example.custom_plugin.mapper" targetProject="src/main/resources">
             <property name="enableSubPackages" value="true" />
         </sqlMapGenerator>
 
         <!-- Java Client (Mapper) -->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.example.buddy_match.mapper" targetProject="src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.example.custom_plugin.mapper" targetProject="src/main/java">
           <property name="enableSubPackages" value="true" />
         </javaClientGenerator>
 
         <!-- Database Table -->
-        <table schema="Test" tableName="test_user" domainObjectName="Team">
+        <table schema="Test" tableName="test_user" domainObjectName="TestUser">
           <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
         </table>
 

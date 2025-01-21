@@ -1,6 +1,6 @@
 package com.example.custom_plugin.service;
 
-import com.example.buddy_match.model.Team;
+import com.example.custom_plugin.model.TestUser;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -19,38 +19,38 @@ import org.springframework.web.bind.annotation.RestController;
  * This is a generated interface for demonstration purposes.
  */
 @RestController
-@RequestMapping("/team")
-public class TeamController {
+@RequestMapping("/testuser")
+public class TestUserController {
     /** This is an example service. */
     @Resource
-    private TeamServiceImpl service;
+    private TestUserServiceImpl service;
 
-    public TeamController(TeamServiceImpl service) {
+    public TestUserController(TestUserServiceImpl service) {
         this.service = service;
     }
 
     @GetMapping("/all")
-    public CollectionModel<EntityModel<Team>> all() {
+    public CollectionModel<EntityModel<TestUser>> all() {
         return service.all();
     }
 
     @PostMapping("/create")
-    public Team create(@RequestBody Team newTeam) {
-        return service.create(newTeam);
+    public TestUser create(@RequestBody TestUser newTestUser) {
+        return service.create(newTestUser);
     }
 
     @GetMapping("/one/{id}")
-    public EntityModel<Team> one(@PathVariable Long id) {
+    public EntityModel<TestUser> one(@PathVariable Long id) {
         return service.one(id);
     }
 
-    @PutMapping("/replaceTeam/{id}")
-    public ResponseEntity<?> replaceTeam(@RequestBody Team newTeam, @PathVariable Long id) {
-        return service.replaceTeam(newTeam,id);
+    @PutMapping("/replaceTestUser/{id}")
+    public ResponseEntity<?> replaceTestUser(@RequestBody TestUser newTestUser, @PathVariable Long id) {
+        return service.replaceTestUser(newTestUser,id);
     }
 
-    @DeleteMapping("/deleteTeam/{id}")
-    public ResponseEntity<?> deleteTeam(@PathVariable Long id) {
-        return service.deleteTeam(id);
+    @DeleteMapping("/deleteTestUser/{id}")
+    public ResponseEntity<?> deleteTestUser(@PathVariable Long id) {
+        return service.deleteTestUser(id);
     }
 }

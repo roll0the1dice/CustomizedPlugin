@@ -3,7 +3,6 @@ package com.example.custom_plugin.service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import com.example.custom_plugin.controller.TestUserController;
 import com.example.custom_plugin.model.TestUser;
 import java.util.List;
 import java.util.stream.Collectors;

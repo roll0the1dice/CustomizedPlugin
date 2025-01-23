@@ -30,6 +30,10 @@ public class ApiResponse<T>  {
         return ResponseEntity.ok().body(new ApiResponse<>(200, "success", data));
     }
 
+    public static <T> ResponseEntity<ApiResponse<T>> success(Integer statusCodeValue, String statusCode, T data) {
+        return ResponseEntity.ok().body(new ApiResponse<>(statusCodeValue, statusCode, data));
+    }
+
     public static <T> ResponseEntity<ApiResponse<T>> fail(Integer statusCodeValue, String statusCode) {
         return ResponseEntity.badRequest().body(new ApiResponse<>(statusCodeValue, statusCode, null));
     }

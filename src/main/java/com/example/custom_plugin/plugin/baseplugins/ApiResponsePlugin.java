@@ -126,6 +126,19 @@ public class ApiResponsePlugin extends PluginAdapter {
     _success.addBodyLine("return ResponseEntity.ok().body(new ApiResponse<>(200, \"success\", data));");
     topLevelClass.addMethod(_success);
 
+    Method _successWithMessage = new Method("success");
+    _successWithMessage.addParameter(new Parameter(new FullyQualifiedJavaType("java.lang.Integer"), "statusCodeValue"));
+    _successWithMessage.addParameter(new Parameter(new FullyQualifiedJavaType("java.lang.String"), "statusCode"));
+    _successWithMessage.addParameter(new Parameter(new FullyQualifiedJavaType("T"), "data"));
+    _successWithMessage.setVisibility(JavaVisibility.PUBLIC);
+    _successWithMessage.setStatic(true);
+    _retType = new FullyQualifiedJavaType("org.springframework.http.ResponseEntity");
+    _retType.addTypeArgument(new FullyQualifiedJavaType("ApiResponse<T>"));
+    _successWithMessage.addTypeParameter(new TypeParameter("T"));
+    _successWithMessage.setReturnType(_retType);
+    _successWithMessage.addBodyLine("return ResponseEntity.ok().body(new ApiResponse<>(statusCodeValue, statusCode, data));");
+    topLevelClass.addMethod(_successWithMessage);
+
     Method _fail = new Method("fail");
     _fail.addParameter(new Parameter(new FullyQualifiedJavaType("java.lang.Integer"), "statusCodeValue"));
     _fail.addParameter(new Parameter(new FullyQualifiedJavaType("java.lang.String"), "statusCode"));

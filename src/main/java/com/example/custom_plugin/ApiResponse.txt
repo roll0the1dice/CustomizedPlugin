@@ -1,0 +1,47 @@
+package com.example.custom_plugin;
+
+import org.springframework.http.ResponseEntity;
+
+public class ApiResponse<T> {
+  private int code;       // 自定义结果码
+  private String message; // 消息
+  private T data;         // 返回数据
+
+  // 构造函数
+  public ApiResponse(int code, String message, T data) {
+      this.code = code;
+      this.message = message;
+      this.data = data;
+  }
+
+  // 静态方法快速创建响应对象
+  public static <T> ResponseEntity<ApiResponse<T>> success(T data) {
+
+    return ResponseEntity.ok().body(new ApiResponse<>(200, "success", data));
+  }
+
+  public static <T> ResponseEntity<ApiResponse<T>> fail(int code, String message) {
+      return ResponseEntity.badRequest().body(new ApiResponse<>(code, message, null));
+  }
+
+  // Getter 和 Setter 方法
+  public int getCode() {
+      return code;
+  }
+
+  public void setCode(int code) {
+      this.code = code;
+  }
+
+  public String getMessage() {
+      return message;
+  }
+
+  public void setMessage(String message) {
+      this.message = message;
+  }
+
+  public T getData() {
+      return data;
+  }
+}

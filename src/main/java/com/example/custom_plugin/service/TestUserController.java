@@ -30,27 +30,27 @@ public class TestUserController {
     }
 
     @GetMapping("/all")
-    public CollectionModel<EntityModel<TestUser>> all() {
-        return service.all();
+    public ResponseEntity<?> all() {
+        return ApiResponse.success(service.all());
     }
 
     @PostMapping("/create")
-    public TestUser create(@RequestBody TestUser newTestUser) {
-        return service.create(newTestUser);
+    public ResponseEntity<?> create(@RequestBody TestUser newTestUser) {
+        return ApiResponse.success(service.create(newTestUser));
     }
 
     @GetMapping("/one/{id}")
-    public EntityModel<TestUser> one(@PathVariable Long id) {
-        return service.one(id);
+    public ResponseEntity<?> one(@PathVariable Long id) {
+        return ApiResponse.success(service.one(id));
     }
 
     @PutMapping("/replaceTestUser/{id}")
     public ResponseEntity<?> replaceTestUser(@RequestBody TestUser newTestUser, @PathVariable Long id) {
-        return service.replaceTestUser(newTestUser,id);
+        return ApiResponse.success(service.replaceTestUser(newTestUser,id));
     }
 
     @DeleteMapping("/deleteTestUser/{id}")
     public ResponseEntity<?> deleteTestUser(@PathVariable Long id) {
-        return service.deleteTestUser(id);
+        return ApiResponse.success(service.deleteTestUser(id));
     }
 }

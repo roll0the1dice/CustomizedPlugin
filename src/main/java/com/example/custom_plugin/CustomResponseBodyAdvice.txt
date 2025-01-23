@@ -1,0 +1,55 @@
+package com.example.custom_plugin;
+
+import org.springframework.core.MethodParameter;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.lang.Nullable;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
+
+
+@RestControllerAdvice
+public class CustomResponseBodyAdvice implements ResponseBodyAdvice<Object> {
+    @Override
+    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+      // TODO Auto-generated method stub
+      return true;
+    }
+
+
+    @Override
+    @Nullable
+    public Object beforeBodyWrite(@Nullable Object body, MethodParameter returnType, MediaType selectedContentType,
+        Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
+        ServerHttpResponse response) {
+        // TODO Auto-generated method stub
+        System.out.println("Before body write: " + body);
+
+        if (body instanceof ResponseEntity) {
+          ResponseEntity<?> responseEntity = (ResponseEntity<?>) body;
+          Map<String, Object> result = new HashMap<>();
+          result.put("status", "success");  // 添加自定义字段
+          result.put("data", responseEntity.getBody());  // 保留原有的数据
+
+          // 构造新的ResponseEntity
+          return ResponseEntity.status(responseEntity.getStatusCode()).headers(responseEntity.getHeaders()).body(result);
+        }
+
+        // 如果返回的不是ResponseEntity，直接返回原数据
+        if (body != null) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("status", "success");  // 添加自定义字段
+            result.put("data", body);  // 保留原有的数据
+            return result;
+        }
+
+        return body; // 如果为空，直接返回
+    }
+}

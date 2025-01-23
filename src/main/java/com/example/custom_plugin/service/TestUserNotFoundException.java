@@ -8,6 +8,6 @@ public class TestUserNotFoundException extends RuntimeException {
     }
 
     public TestUserNotFoundException(Long id) {
-        super("Could not find employee " + id);
+        super("Could not find TestUser " + id);
     }
 }

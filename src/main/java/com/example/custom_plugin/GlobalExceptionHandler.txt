@@ -1,0 +1,15 @@
+package com.example.custom_plugin;
+
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.http.ResponseEntity;
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleException(Exception e) {
+        // 捕获所有异常，并返回自定义错误码和消息
+        return ResponseEntity.status(500).body("Internal Server Error: " + e.getMessage());
+    }
+}

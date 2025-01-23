@@ -1,8 +1,6 @@
 package com.example.custom_plugin.plugin.baseplugins;
 
-import java.lang.reflect.AnnotatedType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -52,10 +50,10 @@ public class GlobalExceptionAdvicePlugin extends PluginAdapter {
 
         // 创建接口类（例如 UserMapper）
         // 创建接口类（例如 UserMapper）
-        String modelClassName = introspectedTable.getBaseRecordType();
+        // String modelClassName = introspectedTable.getBaseRecordType();
 
-        String[] strList = modelClassName.split("\\.");
-        String _modelName = Arrays.asList(strList).get(strList.length - 1);
+        // String[] strList = modelClassName.split("\\.");
+        // String _modelName = Arrays.asList(strList).get(strList.length - 1);
         // String interfaceName = introspectedTable.getFullyQualifiedTable().getDomainObjectName() + modelClassName;
         // System.out.println(packageName);
         // System.out.println(modelClassName);

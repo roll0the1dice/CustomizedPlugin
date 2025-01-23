@@ -49,9 +49,9 @@ public class ServerExceptionPlugin extends PluginAdapter {
         String packageName = this.targetPackage;
 
         // 创建接口类（例如 UserMapper）
-        String modelClassName = introspectedTable.getBaseRecordType();
+        // String modelClassName = introspectedTable.getBaseRecordType();
 
-        String[] strList = modelClassName.split("\\.");
+        // String[] strList = modelClassName.split("\\.");
         // String _modelName = Arrays.asList(strList).get(strList.length - 1);
         // String interfaceName = introspectedTable.getFullyQualifiedTable().getDomainObjectName() + modelClassName;
         // System.out.println(packageName);

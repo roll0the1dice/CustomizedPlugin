@@ -67,6 +67,8 @@ public class GlobalExceptionAdvicePlugin extends PluginAdapter {
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.bind.annotation.RestControllerAdvice"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.http.ResponseEntity"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.http.converter.HttpMessageNotReadableException"));
+        topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.bind.MissingServletRequestParameterException"));
+        topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.method.annotation.MethodArgumentTypeMismatchException"));
 
         // Add class documentation
         topLevelClass.addJavaDocLine("/**");
@@ -76,11 +78,9 @@ public class GlobalExceptionAdvicePlugin extends PluginAdapter {
         topLevelClass.addAnnotation("@RestControllerAdvice");
 
         Method _notFoundHandler = new Method("GlobalExceptionAdvice");
-        FullyQualifiedJavaType _internalServerType =  new FullyQualifiedJavaType(packageName + "." + "InternalServerException");
-        _notFoundHandler.addAnnotation(String.format("@ExceptionHandler(%s.class)", _internalServerType.getFullyQualifiedName()));
         _notFoundHandler.addAnnotation("@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)");
         _notFoundHandler.setVisibility(JavaVisibility.PUBLIC);
-        Parameter parameter  = new Parameter(_internalServerType, "ex");
+        Parameter parameter  = new Parameter(new FullyQualifiedJavaType("java.lang.RuntimeException"), "ex");
         _notFoundHandler.addParameter(parameter);
         FullyQualifiedJavaType _retType = new FullyQualifiedJavaType("org.springframework.http.ResponseEntity");
         _retType.addTypeArgument(new FullyQualifiedJavaType("?"));
@@ -89,15 +89,34 @@ public class GlobalExceptionAdvicePlugin extends PluginAdapter {
         topLevelClass.addMethod(_notFoundHandler);
 
         Method _invalidInputHandler = new Method("GlobalExceptionAdvice");
-        FullyQualifiedJavaType _invalidInputType =  new FullyQualifiedJavaType("org.springframework.http.converter.HttpMessageNotReadableException");
-        _invalidInputHandler.addAnnotation(String.format("@ExceptionHandler(%s.class)", _invalidInputType.getFullyQualifiedName()));
-        _invalidInputHandler.addAnnotation("@ResponseStatus(HttpStatus.BAD_REQUEST)");
+        FullyQualifiedJavaType _httpMessageNotReadableExceptionType =  new FullyQualifiedJavaType("org.springframework.http.converter.HttpMessageNotReadableException");
+        _invalidInputHandler.addAnnotation(String.format("@ExceptionHandler(%s.class)", _httpMessageNotReadableExceptionType.getFullyQualifiedName()));
         _invalidInputHandler.setVisibility(JavaVisibility.PUBLIC);
-        parameter  = new Parameter(_invalidInputType, "ex");
+        parameter  = new Parameter(_httpMessageNotReadableExceptionType, "ex");
         _invalidInputHandler.addParameter(parameter);
         _invalidInputHandler.setReturnType(_retType);
         _invalidInputHandler.addBodyLine("return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(\"Invalid Input Error: \" + ex.getMessage());");
         topLevelClass.addMethod(_invalidInputHandler);
+
+        Method _methodArgumentTypeMismatchExceptionHandler = new Method("GlobalExceptionAdvice");
+        FullyQualifiedJavaType _methodArgumentTypeMismatchExceptionType =  new FullyQualifiedJavaType("org.springframework.web.method.annotation.MethodArgumentTypeMismatchException");
+        _methodArgumentTypeMismatchExceptionHandler.addAnnotation(String.format("@ExceptionHandler(%s.class)", _methodArgumentTypeMismatchExceptionType.getFullyQualifiedName()));
+        _methodArgumentTypeMismatchExceptionHandler.setVisibility(JavaVisibility.PUBLIC);
+        parameter  = new Parameter(_methodArgumentTypeMismatchExceptionType, "ex");
+        _methodArgumentTypeMismatchExceptionHandler.addParameter(parameter);
+        _methodArgumentTypeMismatchExceptionHandler.setReturnType(_retType);
+        _methodArgumentTypeMismatchExceptionHandler.addBodyLine("return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(\"Invalid Input Error: \" + ex.getMessage());");
+        topLevelClass.addMethod(_methodArgumentTypeMismatchExceptionHandler);
+
+        Method _missingServletRequestParameterExceptionHandler = new Method("GlobalExceptionAdvice");
+        FullyQualifiedJavaType _missingServletRequestParameterExceptionType =  new FullyQualifiedJavaType("org.springframework.web.bind.MissingServletRequestParameterException");
+        _missingServletRequestParameterExceptionHandler.addAnnotation(String.format("@ExceptionHandler(%s.class)", _missingServletRequestParameterExceptionType.getFullyQualifiedName()));
+        _missingServletRequestParameterExceptionHandler.setVisibility(JavaVisibility.PUBLIC);
+        parameter  = new Parameter(_missingServletRequestParameterExceptionType, "ex");
+        _missingServletRequestParameterExceptionHandler.addParameter(parameter);
+        _missingServletRequestParameterExceptionHandler.setReturnType(_retType);
+        _missingServletRequestParameterExceptionHandler.addBodyLine("return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(\"Invalid Input Error: \" + ex.getMessage());");
+        topLevelClass.addMethod(_missingServletRequestParameterExceptionHandler);
 
         // Use DefaultJavaFormatter to format the generated Java file
         DefaultJavaFormatter javaFormatter = new DefaultJavaFormatter();

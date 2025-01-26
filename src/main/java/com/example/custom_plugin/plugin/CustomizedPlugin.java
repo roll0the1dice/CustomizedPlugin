@@ -17,15 +17,17 @@ import org.springframework.util.ResourceUtils;
 import com.example.custom_plugin.plugin.baseplugins.ApiResponsePlugin;
 import com.example.custom_plugin.plugin.baseplugins.BaseServicePlugin;
 import com.example.custom_plugin.plugin.baseplugins.ControllerPlugin;
+import com.example.custom_plugin.plugin.baseplugins.CustomPageImplPlugin;
 import com.example.custom_plugin.plugin.baseplugins.CustomSpecsPlugin;
 import com.example.custom_plugin.plugin.baseplugins.GlobalExceptionAdvicePlugin;
 import com.example.custom_plugin.plugin.baseplugins.ModelAssemblerPlugin;
 import com.example.custom_plugin.plugin.baseplugins.NotFoundAdvicePlugin;
 import com.example.custom_plugin.plugin.baseplugins.NotFoundExceptionPlugin;
 import com.example.custom_plugin.plugin.baseplugins.RepositoryPlugin;
-import com.example.custom_plugin.plugin.baseplugins.ServerExceptionPlugin;
+import com.example.custom_plugin.plugin.baseplugins.BadRequestExceptionPlugin;
 import com.example.custom_plugin.plugin.baseplugins.ServiceImplPlugin;
 import com.example.custom_plugin.plugin.baseplugins.ServicePlugin;
+import com.example.custom_plugin.plugin.baseplugins.WebConfigPlugin;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -45,7 +47,9 @@ public class CustomizedPlugin extends PluginAdapter {
   CustomSpecsPlugin customSpecsPlugin;
   GlobalExceptionAdvicePlugin globalExceptionAdvicePlugin;
   ApiResponsePlugin apiResponsePlugin;
-  ServerExceptionPlugin serverExceptionPlugin;
+  BadRequestExceptionPlugin serverExceptionPlugin;
+  CustomPageImplPlugin customPageImplPlugin;
+  WebConfigPlugin webConfigPlugin;
 
   public CustomizedPlugin() {
     super();
@@ -60,7 +64,9 @@ public class CustomizedPlugin extends PluginAdapter {
     customSpecsPlugin = new CustomSpecsPlugin(properties);
     globalExceptionAdvicePlugin = new GlobalExceptionAdvicePlugin(properties);
     apiResponsePlugin = new ApiResponsePlugin(properties);
-    serverExceptionPlugin = new ServerExceptionPlugin(properties);
+    serverExceptionPlugin = new BadRequestExceptionPlugin(properties);
+    customPageImplPlugin = new CustomPageImplPlugin(properties);
+    webConfigPlugin = new WebConfigPlugin(properties);
   }
 
   public boolean validate(List<String> warnings) {
@@ -75,7 +81,9 @@ public class CustomizedPlugin extends PluginAdapter {
         customSpecsPlugin.validate(warnings) &&
         globalExceptionAdvicePlugin.validate(warnings) &&
         apiResponsePlugin.validate(warnings) &&
-        serverExceptionPlugin.validate(warnings);
+        serverExceptionPlugin.validate(warnings) &&
+        customPageImplPlugin.validate(warnings) &&
+        webConfigPlugin.validate(warnings);
   }
 
   @Override
@@ -196,6 +204,14 @@ public class CustomizedPlugin extends PluginAdapter {
     List<GeneratedJavaFile> serverExceptionPluginFiles = serverExceptionPlugin
         .contextGenerateAdditionalJavaFiles(introspectedTable);
     additionalFiles.addAll(serverExceptionPluginFiles);
+
+    List<GeneratedJavaFile> customPageImplPluginFiles = customPageImplPlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(customPageImplPluginFiles);
+
+    List<GeneratedJavaFile> webConfigPluginFiles = webConfigPlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(webConfigPluginFiles);
 
     return additionalFiles;
   }

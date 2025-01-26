@@ -14,17 +14,17 @@ import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 
-public class ServerExceptionPlugin extends PluginAdapter {
+public class BadRequestExceptionPlugin extends PluginAdapter {
     private String targetPackage;
 
     private Properties properties;
 
-    public ServerExceptionPlugin(Properties properties) {
+    public BadRequestExceptionPlugin(Properties properties) {
         super();
         this.properties = properties;
     }
 
-    public ServerExceptionPlugin() {
+    public BadRequestExceptionPlugin() {
         super();
     }
 
@@ -56,7 +56,7 @@ public class ServerExceptionPlugin extends PluginAdapter {
         // String interfaceName = introspectedTable.getFullyQualifiedTable().getDomainObjectName() + modelClassName;
         // System.out.println(packageName);
         // System.out.println(modelClassName);
-        TopLevelClass topLevelClass = new TopLevelClass(packageName + "." + "InternalServerException");
+        TopLevelClass topLevelClass = new TopLevelClass(packageName + "." + "BadRequestException");
         topLevelClass.setVisibility(JavaVisibility.PUBLIC);
 
         // Add class documentation
@@ -68,12 +68,12 @@ public class ServerExceptionPlugin extends PluginAdapter {
 
         topLevelClass.setSuperClass(new FullyQualifiedJavaType("java.lang.RuntimeException"));
 
-        Method _defaultconstructor = new Method("InternalServerException");
+        Method _defaultconstructor = new Method("BadRequestException");
         _defaultconstructor.setConstructor(true);
         _defaultconstructor.setVisibility(JavaVisibility.PUBLIC);
         topLevelClass.addMethod(_defaultconstructor);
 
-        Method _constructor = new Method("InternalServerException");
+        Method _constructor = new Method("BadRequestException");
         _constructor.setConstructor(true);
         _constructor.setVisibility(JavaVisibility.PUBLIC);
         Parameter parameter  = new Parameter(new FullyQualifiedJavaType("java.lang.String"), "message");

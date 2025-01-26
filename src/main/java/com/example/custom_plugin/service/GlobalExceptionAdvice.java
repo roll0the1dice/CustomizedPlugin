@@ -19,6 +19,11 @@ public class GlobalExceptionAdvice {
         return ResponseEntity.status(500).body("Internal Server Error: " + ex.getMessage());
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> GlobalExceptionAdvice(BadRequestException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad Request Error: " + ex.getMessage());
+    }
+
     @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
     public ResponseEntity<?> GlobalExceptionAdvice(HttpMessageNotReadableException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Input Error: " + ex.getMessage());

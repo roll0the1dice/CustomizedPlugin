@@ -3,7 +3,6 @@ package com.example.custom_plugin.service;
 import com.example.custom_plugin.model.TestUser;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -30,8 +30,8 @@ public class TestUserController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> all() {
-        return ApiResponse.success(service.all());
+    public ResponseEntity<?> all(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+        return ApiResponse.success(service.all(page,size));
     }
 
     @PostMapping("/create")

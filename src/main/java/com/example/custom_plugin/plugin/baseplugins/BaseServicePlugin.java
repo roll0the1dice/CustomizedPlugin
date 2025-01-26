@@ -93,6 +93,8 @@ public class BaseServicePlugin extends PluginAdapter {
         topLevelClass.addImportedType(new FullyQualifiedJavaType("java.util.stream.Collectors"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.http.ResponseEntity"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.hateoas.IanaLinkRelations"));
+        topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.data.domain.Pageable"));
+        topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.data.domain.PageRequest"));
 
         topLevelClass.addAnnotation("@Service");
 
@@ -130,15 +132,16 @@ public class BaseServicePlugin extends PluginAdapter {
         Method _getAll = new Method("all");
         //_getAll.addAnnotation(String.format("@GetMapping(\"/all_%s\")", _modelName.toLowerCase()));
         _getAll.setVisibility(JavaVisibility.PUBLIC);
-        FullyQualifiedJavaType _retTypeForOne = new FullyQualifiedJavaType("org.springframework.hateoas.CollectionModel");
-        FullyQualifiedJavaType _entityType = new FullyQualifiedJavaType("org.springframework.hateoas.EntityModel");
+        Parameter page = new Parameter(new FullyQualifiedJavaType("java.lang.Integer"), "page");
+        Parameter size = new Parameter(new FullyQualifiedJavaType("java.lang.Integer"), "size");
+        _getAll.addParameter(page);
+        _getAll.addParameter(size);
+        FullyQualifiedJavaType _entityType = new FullyQualifiedJavaType("CustomPageImpl");
         _entityType.addTypeArgument(new FullyQualifiedJavaType(modelClassName));
-        _retTypeForOne.addTypeArgument(_entityType);
-        _getAll.setReturnType(_retTypeForOne);
-        String[] _tmpParameters = {String.format("List<%s> %s = repository.findAll().stream()", _entityType.getShortName(), _modelName.toLowerCase()), 
-                                    ".map(assembler::toModel)",
-                                    ".collect(Collectors.toList());",
-                                    String.format("return CollectionModel.of(%s, linkTo(methodOn(%sController.class).all()).withSelfRel());", _modelName.toLowerCase(), _modelName)};
+        _getAll.setReturnType(_entityType);
+        String[] _tmpParameters = {"Pageable pageable = PageRequest.of(page, size);",
+                                    String.format("List<%s> %sPage = repository.findAll(pageable).toList();", _modelName, _modelName.toLowerCase()), 
+                                    String.format("return new CustomPageImpl<%s>(%sPage, pageable, (long)(%sPage.size()));",_modelName, _modelName.toLowerCase(), _modelName.toLowerCase())};
         // 将数组转换为 List<String>
         List<String> _tmpstringList = Arrays.asList(_tmpParameters);
         // 将 List<String> 赋值给 Collection<String>
@@ -163,7 +166,7 @@ public class BaseServicePlugin extends PluginAdapter {
         parameter  = new Parameter(new FullyQualifiedJavaType("java.lang.Long"), "id");
         parameter.addAnnotation("@PathVariable");
         _getOne.addParameter(parameter);
-        _retTypeForOne = new FullyQualifiedJavaType("org.springframework.hateoas.EntityModel");
+        FullyQualifiedJavaType _retTypeForOne = new FullyQualifiedJavaType("org.springframework.hateoas.EntityModel");
         _retTypeForOne.addTypeArgument(new FullyQualifiedJavaType(modelClassName));
         _getOne.setReturnType(_retTypeForOne);
         String[] strParameter2 = {String.format("%s %s = repository.findById(id)", _modelName, _modelName.toLowerCase()), 
@@ -179,6 +182,8 @@ public class BaseServicePlugin extends PluginAdapter {
         Method _replace = new Method("replace" + _modelName);
         //_replace.addAnnotation(String.format("@PutMapping(\"/%s/{id}\")", _modelName.toLowerCase()));
         _replace.setVisibility(JavaVisibility.PUBLIC);
+        _entityType = new FullyQualifiedJavaType("org.springframework.hateoas.EntityModel");
+        _entityType.addTypeArgument(new FullyQualifiedJavaType(modelClassName));
         parameter  = new Parameter(new FullyQualifiedJavaType(modelClassName), "new" + _modelName);
         parameter.addAnnotation("@RequestBody");
         _replace.addParameter(parameter);
@@ -188,6 +193,7 @@ public class BaseServicePlugin extends PluginAdapter {
         _replace.setReturnType(new FullyQualifiedJavaType("ResponseEntity<?> "));
         String[] strParameter3 = {String.format("%s _updateModel = repository.findById(id)", _modelName, _modelName.toLowerCase()), 
                                     String.format(".map(%s -> {", "_new" + _modelName),
+                                    "//_newTestUser.setId(newTestUser.getId());",
                                     String.format("return repository.save(%s);", "_new" + _modelName),
                                     "})",
                                     ".orElseGet(() -> {",

@@ -7,6 +7,8 @@ import com.example.custom_plugin.model.TestUser;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -35,11 +37,10 @@ public class TestUserBaseService {
         this.assembler = assembler;
     }
 
-    public CollectionModel<EntityModel<TestUser>> all() {
-        List<EntityModel<TestUser>> testuser = repository.findAll().stream()
-        .map(assembler::toModel)
-        .collect(Collectors.toList());
-        return CollectionModel.of(testuser, linkTo(methodOn(TestUserController.class).all()).withSelfRel());
+    public CustomPageImpl<TestUser> all(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<TestUser> testuserPage = repository.findAll(pageable).toList();
+        return new CustomPageImpl<TestUser>(testuserPage, pageable, (long)(testuserPage.size()));
     }
 
     public TestUser create(@RequestBody TestUser newTestUser) {
@@ -55,6 +56,7 @@ public class TestUserBaseService {
     public ResponseEntity<?> replaceTestUser(@RequestBody TestUser newTestUser, @PathVariable Long id) {
         TestUser _updateModel = repository.findById(id)
         .map(_newTestUser -> {
+            //_newTestUser.setId(newTestUser.getId());
             return repository.save(_newTestUser);
         })
         .orElseGet(() -> {

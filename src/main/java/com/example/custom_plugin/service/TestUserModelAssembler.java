@@ -18,6 +18,6 @@ public class TestUserModelAssembler implements RepresentationModelAssembler<Test
     public EntityModel<TestUser> toModel(@NonNull TestUser testuser) {
         return EntityModel.of(testuser,
         linkTo(methodOn(TestUserController.class).one(testuser.getId())).withSelfRel(),
-        linkTo(methodOn(TestUserController.class).all()).withRel("testuser"));
+        linkTo(methodOn(TestUserController.class).all(0, 10)).withRel("testuser"));
     }
 }

@@ -88,6 +88,16 @@ public class GlobalExceptionAdvicePlugin extends PluginAdapter {
         _notFoundHandler.addBodyLine("return ResponseEntity.status(500).body(\"Internal Server Error: \" + ex.getMessage());");
         topLevelClass.addMethod(_notFoundHandler);
 
+        Method _badRequestExceptionHandler = new Method("GlobalExceptionAdvice");
+        FullyQualifiedJavaType _badRequestExceptionType =  new FullyQualifiedJavaType("BadRequestException");
+        _badRequestExceptionHandler.addAnnotation(String.format("@ExceptionHandler(%s.class)", _badRequestExceptionType.getFullyQualifiedName()));
+        _badRequestExceptionHandler.setVisibility(JavaVisibility.PUBLIC);
+        parameter  = new Parameter(_badRequestExceptionType, "ex");
+        _badRequestExceptionHandler.addParameter(parameter);
+        _badRequestExceptionHandler.setReturnType(_retType);
+        _badRequestExceptionHandler.addBodyLine("return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(\"Bad Request Error: \" + ex.getMessage());");
+        topLevelClass.addMethod(_badRequestExceptionHandler);
+
         Method _invalidInputHandler = new Method("GlobalExceptionAdvice");
         FullyQualifiedJavaType _httpMessageNotReadableExceptionType =  new FullyQualifiedJavaType("org.springframework.http.converter.HttpMessageNotReadableException");
         _invalidInputHandler.addAnnotation(String.format("@ExceptionHandler(%s.class)", _httpMessageNotReadableExceptionType.getFullyQualifiedName()));

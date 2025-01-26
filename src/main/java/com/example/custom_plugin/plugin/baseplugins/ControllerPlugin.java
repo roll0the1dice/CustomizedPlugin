@@ -88,7 +88,7 @@ public class ControllerPlugin extends PluginAdapter {
     topLevelClass.addImportedType(new FullyQualifiedJavaType(packageName + "." + _modelName + "NotFoundException"));
     topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.beans.factory.annotation.Autowired"));
     topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.hateoas.EntityModel"));
-    topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.hateoas.CollectionModel"));
+    topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.bind.annotation.RequestParam"));
     // topLevelClass.addImportedType(new FullyQualifiedJavaType("java.util.List"));
     topLevelClass.addImportedType(new FullyQualifiedJavaType("jakarta.annotation.Resource"));
     topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.http.ResponseEntity"));
@@ -115,10 +115,16 @@ public class ControllerPlugin extends PluginAdapter {
     Method _getAll = new Method("all");
     _getAll.addAnnotation(String.format("@GetMapping(\"/%s\")", _getAll.getName()));
     _getAll.setVisibility(JavaVisibility.PUBLIC);
+    Parameter page = new Parameter(new FullyQualifiedJavaType("java.lang.Integer"), "page");
+    page.addAnnotation("@RequestParam(defaultValue = \"0\")");
+    Parameter size = new Parameter(new FullyQualifiedJavaType("java.lang.Integer"), "size");
+    size.addAnnotation("@RequestParam(defaultValue = \"10\")");
+    _getAll.addParameter(page);
+    _getAll.addParameter(size);
     FullyQualifiedJavaType _retTypeForOne = new FullyQualifiedJavaType("org.springframework.http.ResponseEntity");
     _retTypeForOne.addTypeArgument(new FullyQualifiedJavaType("?"));
     _getAll.setReturnType(_retTypeForOne);
-    _getAll.addBodyLine(String.format("return ApiResponse.success(service.%s());", _getAll.getName()));
+    _getAll.addBodyLine(String.format("return ApiResponse.success(service.%s(page,size));", _getAll.getName()));
     topLevelClass.addMethod(_getAll);
 
     Method _saveNew = new Method("create");

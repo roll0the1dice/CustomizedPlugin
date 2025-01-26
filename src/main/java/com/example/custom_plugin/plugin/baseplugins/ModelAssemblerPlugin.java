@@ -95,7 +95,7 @@ public class ModelAssemblerPlugin extends PluginAdapter {
         String[] strParameter3 = { String.format("return EntityModel.of(%s,", _modelName.toLowerCase()),
                 String.format("linkTo(methodOn(%sController.class).one(%s.getId())).withSelfRel(),", _modelName,
                         _modelName.toLowerCase()),
-                String.format("linkTo(methodOn(%sController.class).all()).withRel(\"%s\"));", _modelName,
+                String.format("linkTo(methodOn(%sController.class).all(0, 10)).withRel(\"%s\"));", _modelName,
                         _modelName.toLowerCase())
         };
         // 将数组转换为 List<String>

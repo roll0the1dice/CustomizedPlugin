@@ -74,9 +74,11 @@ public class WebConfigPlugin extends PluginAdapter {
     topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.data.web.config.EnableSpringDataWebSupport"));
     topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.servlet.config.annotation.WebMvcConfigurer"));
     topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.context.annotation.Configuration"));
+    topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.context.annotation.EnableAspectJAutoProxy"));
 
     topLevelClass.addAnnotation("@Configuration");
     topLevelClass.addAnnotation("@EnableSpringDataWebSupport(pageSerializationMode = EnableSpringDataWebSupport.PageSerializationMode.VIA_DTO)");
+    topLevelClass.addAnnotation("@EnableAspectJAutoProxy");
 
     topLevelClass.addSuperInterface(new FullyQualifiedJavaType("org.springframework.web.servlet.config.annotation.WebMvcConfigurer"));
 

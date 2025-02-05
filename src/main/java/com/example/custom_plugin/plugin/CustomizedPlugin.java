@@ -15,6 +15,8 @@ import org.mybatis.generator.internal.DefaultShellCallback;
 import org.springframework.util.ResourceUtils;
 
 import com.example.custom_plugin.plugin.baseplugins.ApiResponsePlugin;
+import com.example.custom_plugin.plugin.baseplugins.AuthCheckAnnotationPlugin;
+import com.example.custom_plugin.plugin.baseplugins.AuthInterceptorPlugin;
 import com.example.custom_plugin.plugin.baseplugins.BaseServicePlugin;
 import com.example.custom_plugin.plugin.baseplugins.ControllerPlugin;
 import com.example.custom_plugin.plugin.baseplugins.CustomPageImplPlugin;
@@ -27,6 +29,7 @@ import com.example.custom_plugin.plugin.baseplugins.RepositoryPlugin;
 import com.example.custom_plugin.plugin.baseplugins.BadRequestExceptionPlugin;
 import com.example.custom_plugin.plugin.baseplugins.ServiceImplPlugin;
 import com.example.custom_plugin.plugin.baseplugins.ServicePlugin;
+import com.example.custom_plugin.plugin.baseplugins.UserRoleEnumPlugin;
 import com.example.custom_plugin.plugin.baseplugins.WebConfigPlugin;
 
 import java.io.File;
@@ -50,6 +53,9 @@ public class CustomizedPlugin extends PluginAdapter {
   BadRequestExceptionPlugin serverExceptionPlugin;
   CustomPageImplPlugin customPageImplPlugin;
   WebConfigPlugin webConfigPlugin;
+  UserRoleEnumPlugin userRoleEnumPlugin;
+  AuthInterceptorPlugin authInterceptorPlugin;
+  AuthCheckAnnotationPlugin authCheckAnnotationPlugin;
 
   public CustomizedPlugin() {
     super();
@@ -67,6 +73,9 @@ public class CustomizedPlugin extends PluginAdapter {
     serverExceptionPlugin = new BadRequestExceptionPlugin(properties);
     customPageImplPlugin = new CustomPageImplPlugin(properties);
     webConfigPlugin = new WebConfigPlugin(properties);
+    userRoleEnumPlugin = new UserRoleEnumPlugin(properties);
+    authInterceptorPlugin = new AuthInterceptorPlugin(properties);
+    authCheckAnnotationPlugin = new AuthCheckAnnotationPlugin(properties);
   }
 
   public boolean validate(List<String> warnings) {
@@ -83,7 +92,10 @@ public class CustomizedPlugin extends PluginAdapter {
         apiResponsePlugin.validate(warnings) &&
         serverExceptionPlugin.validate(warnings) &&
         customPageImplPlugin.validate(warnings) &&
-        webConfigPlugin.validate(warnings);
+        webConfigPlugin.validate(warnings) &&
+        userRoleEnumPlugin.validate(warnings) &&
+        authInterceptorPlugin.validate(warnings) &&
+        authCheckAnnotationPlugin.validate(warnings);
   }
 
   @Override
@@ -213,8 +225,21 @@ public class CustomizedPlugin extends PluginAdapter {
         .contextGenerateAdditionalJavaFiles(introspectedTable);
     additionalFiles.addAll(webConfigPluginFiles);
 
+    List<GeneratedJavaFile> userRoleEnumPluginFiles = userRoleEnumPlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(userRoleEnumPluginFiles);
+
+    List<GeneratedJavaFile> authInterceptorPluginFiles = authInterceptorPlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(authInterceptorPluginFiles);
+
+    List<GeneratedJavaFile> authCheckAnnotationPluginFiles = authCheckAnnotationPlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(authCheckAnnotationPluginFiles);
+
     return additionalFiles;
   }
+
 
   public static void main(String[] args) {
     try {

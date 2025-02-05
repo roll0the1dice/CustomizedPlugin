@@ -1,6 +1,6 @@
 package com.example.custom_plugin.service;
 
-import com.example.custom_plugin.model.TestUser;
+import com.example.custom_plugin.model.Users;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
  * This is a generated interface for demonstration purposes.
  */
 @RestController
-@RequestMapping("/testuser")
-public class TestUserController {
+@RequestMapping("/users")
+public class UsersController {
     /** This is an example service. */
     @Resource
-    private TestUserServiceImpl service;
+    private UsersServiceImpl service;
 
-    public TestUserController(TestUserServiceImpl service) {
+    public UsersController(UsersServiceImpl service) {
         this.service = service;
     }
 
@@ -35,8 +35,8 @@ public class TestUserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody TestUser newTestUser) {
-        return ApiResponse.success(service.create(newTestUser));
+    public ResponseEntity<?> create(@RequestBody Users newUsers) {
+        return ApiResponse.success(service.create(newUsers));
     }
 
     @GetMapping("/one/{id}")
@@ -44,13 +44,13 @@ public class TestUserController {
         return ApiResponse.success(service.one(id));
     }
 
-    @PutMapping("/replaceTestUser/{id}")
-    public ResponseEntity<?> replaceTestUser(@RequestBody TestUser newTestUser, @PathVariable Long id) {
-        return ApiResponse.success(service.replaceTestUser(newTestUser,id));
+    @PutMapping("/replaceUsers/{id}")
+    public ResponseEntity<?> replaceUsers(@RequestBody Users newUsers, @PathVariable Long id) {
+        return ApiResponse.success(service.replaceUsers(newUsers,id));
     }
 
-    @DeleteMapping("/deleteTestUser/{id}")
-    public ResponseEntity<?> deleteTestUser(@PathVariable Long id) {
-        return ApiResponse.success(service.deleteTestUser(id));
+    @DeleteMapping("/deleteUsers/{id}")
+    public ResponseEntity<?> deleteUsers(@PathVariable Long id) {
+        return ApiResponse.success(service.deleteUsers(id));
     }
 }

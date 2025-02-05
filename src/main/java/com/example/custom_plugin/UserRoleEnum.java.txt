@@ -1,0 +1,24 @@
+package com.example.blogcore.enums;
+
+/**
+ * 用户角色枚举
+ *
+ */
+public enum UserRoleEnum {
+
+    USER("用户"),
+    ADMIN("管理员"),
+    BAN("被封号");
+
+    private final String description;
+
+    // 构造方法，必须是 private 的
+    UserRoleEnum(String description) {
+        this.description = description;
+    }
+
+    // 获取字符串描述的方法
+    public String getDescription() {
+        return description;
+    }
+}

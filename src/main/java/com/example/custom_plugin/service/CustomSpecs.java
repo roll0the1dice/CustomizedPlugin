@@ -1,6 +1,6 @@
 package com.example.custom_plugin.service;
 
-import com.example.custom_plugin.model.TestUser;
+import com.example.custom_plugin.model.Users;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;

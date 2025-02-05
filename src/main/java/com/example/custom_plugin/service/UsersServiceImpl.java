@@ -7,19 +7,19 @@ import org.springframework.stereotype.Service;
  * This is a generated Service for demonstration purposes.
  */
 @Service
-public class TestUserServiceImpl extends TestUserBaseService implements TestUserService {
+public class UsersServiceImpl extends UsersBaseService implements UsersService {
     /** This is an example repository. */
-    private TestUserRepository repository;
+    private UsersRepository repository;
 
     /** This is an example modelAssembler. */
-    private TestUserModelAssembler assembler;
+    private UsersModelAssembler assembler;
 
-    public TestUserServiceImpl() {
+    public UsersServiceImpl() {
         super();
     }
 
     @Autowired
-    public TestUserServiceImpl(TestUserRepository repository, TestUserModelAssembler assembler) {
+    public UsersServiceImpl(UsersRepository repository, UsersModelAssembler assembler) {
         super(repository,assembler);
         this.repository = repository;
         this.assembler = assembler;

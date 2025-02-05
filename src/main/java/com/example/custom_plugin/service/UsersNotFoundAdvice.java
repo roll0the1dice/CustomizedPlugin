@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * This is a generated NotFoundException for demonstration purposes.
  */
 @RestControllerAdvice
-public class TestUserNotFoundAdvice {
-    @ExceptionHandler(TestUserNotFoundException.class)
+public class UsersNotFoundAdvice {
+    @ExceptionHandler(UsersNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String TestUserNotFoundHandler(TestUserNotFoundException ex) {
+    public String UsersNotFoundHandler(UsersNotFoundException ex) {
         return ex.getMessage();
     }
 }

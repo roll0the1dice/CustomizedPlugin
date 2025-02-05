@@ -14,7 +14,7 @@
         </plugin>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/Test?useSSL=false&amp;serverTimezone=Asia/Shanghai"
+                        connectionURL="jdbc:mysql://localhost:3306/ATest?useSSL=false&amp;serverTimezone=Asia/Shanghai"
                         userId="admin"
                         password="123456">
                         <!-- <property name="nullCatalogMeansCurrent" value="true" /> -->
@@ -37,7 +37,7 @@
         </javaClientGenerator>
 
         <!-- Database Table -->
-        <table schema="Test" tableName="test_user" domainObjectName="TestUser">
+        <table schema="ATest" tableName="users" domainObjectName="Users">
           <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
         </table>
 

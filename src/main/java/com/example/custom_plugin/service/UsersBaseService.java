@@ -3,7 +3,7 @@ package com.example.custom_plugin.service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import com.example.custom_plugin.model.TestUser;
+import com.example.custom_plugin.model.Users;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,54 +21,54 @@ import org.springframework.web.bind.annotation.RequestBody;
  * This is a generated BaseService for demonstration purposes.
  */
 @Service
-public class TestUserBaseService {
+public class UsersBaseService {
     /** This is an example repository. */
-    private TestUserRepository repository;
+    private UsersRepository repository;
 
     /** This is an example modelAssembler. */
-    private TestUserModelAssembler assembler;
+    private UsersModelAssembler assembler;
 
-    public TestUserBaseService() {
+    public UsersBaseService() {
     }
 
     @Autowired
-    public TestUserBaseService(TestUserRepository repository, TestUserModelAssembler assembler) {
+    public UsersBaseService(UsersRepository repository, UsersModelAssembler assembler) {
         this.repository = repository;
         this.assembler = assembler;
     }
 
-    public CustomPageImpl<TestUser> all(Integer page, Integer size) {
+    public CustomPageImpl<Users> all(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
-        List<TestUser> testuserPage = repository.findAll(pageable).toList();
-        return new CustomPageImpl<TestUser>(testuserPage, pageable, (long)(testuserPage.size()));
+        List<Users> usersPage = repository.findAll(pageable).toList();
+        return new CustomPageImpl<Users>(usersPage, pageable, (long)(usersPage.size()));
     }
 
-    public TestUser create(@RequestBody TestUser newTestUser) {
-        return repository.save(newTestUser);
+    public Users create(@RequestBody Users newUsers) {
+        return repository.save(newUsers);
     }
 
-    public EntityModel<TestUser> one(@PathVariable Long id) {
-        TestUser testuser = repository.findById(id)
-        .orElseThrow(() -> new TestUserNotFoundException(id));
-        return assembler.toModel(testuser);
+    public EntityModel<Users> one(@PathVariable Long id) {
+        Users users = repository.findById(id)
+        .orElseThrow(() -> new UsersNotFoundException(id));
+        return assembler.toModel(users);
     }
 
-    public ResponseEntity<?> replaceTestUser(@RequestBody TestUser newTestUser, @PathVariable Long id) {
-        TestUser _updateModel = repository.findById(id)
-        .map(_newTestUser -> {
+    public ResponseEntity<?> replaceUsers(@RequestBody Users newUsers, @PathVariable Long id) {
+        Users _updateModel = repository.findById(id)
+        .map(_newUsers -> {
             //_newTestUser.setId(newTestUser.getId());
-            return repository.save(_newTestUser);
+            return repository.save(_newUsers);
         })
         .orElseGet(() -> {
-            return repository.save(newTestUser);
+            return repository.save(newUsers);
         });
-        EntityModel<TestUser> entityModel = assembler.toModel(_updateModel);
+        EntityModel<Users> entityModel = assembler.toModel(_updateModel);
         return ResponseEntity
         .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
         .body(entityModel);
     }
 
-    public ResponseEntity<?> deleteTestUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUsers(@PathVariable Long id) {
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

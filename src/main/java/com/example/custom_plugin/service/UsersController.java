@@ -50,7 +50,6 @@ public class UsersController {
     }
 
     @DeleteMapping("/deleteUsers/{id}")
-    @AuthCheck(mustRole = UserRoleEnum.ADMIN)
     public ResponseEntity<?> deleteUsers(@PathVariable Long id) {
         return ApiResponse.success(service.deleteUsers(id));
     }

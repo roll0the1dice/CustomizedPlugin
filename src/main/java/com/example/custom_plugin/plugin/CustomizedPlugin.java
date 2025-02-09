@@ -8,6 +8,9 @@ import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.Field;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Interface;
+import org.mybatis.generator.api.dom.java.JavaVisibility;
+import org.mybatis.generator.api.dom.java.Method;
+import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.xml.ConfigurationParser;
@@ -15,7 +18,7 @@ import org.mybatis.generator.internal.DefaultShellCallback;
 import org.springframework.util.ResourceUtils;
 
 import com.example.custom_plugin.plugin.baseplugins.ApiResponsePlugin;
-import com.example.custom_plugin.plugin.baseplugins.AuthCheckAnnotationPlugin;
+import com.example.custom_plugin.plugin.baseplugins.WithAuthPlugin;
 import com.example.custom_plugin.plugin.baseplugins.AuthInterceptorPlugin;
 import com.example.custom_plugin.plugin.baseplugins.BaseServicePlugin;
 import com.example.custom_plugin.plugin.baseplugins.ControllerPlugin;
@@ -29,12 +32,16 @@ import com.example.custom_plugin.plugin.baseplugins.RepositoryPlugin;
 import com.example.custom_plugin.plugin.baseplugins.BadRequestExceptionPlugin;
 import com.example.custom_plugin.plugin.baseplugins.ServiceImplPlugin;
 import com.example.custom_plugin.plugin.baseplugins.ServicePlugin;
+import com.example.custom_plugin.plugin.baseplugins.SnowflakeIdGeneratorImplPlugin;
+import com.example.custom_plugin.plugin.baseplugins.SnowflakeIdGeneratorPlugin;
 import com.example.custom_plugin.plugin.baseplugins.UserRoleEnumPlugin;
 import com.example.custom_plugin.plugin.baseplugins.WebConfigPlugin;
 
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -55,7 +62,9 @@ public class CustomizedPlugin extends PluginAdapter {
   WebConfigPlugin webConfigPlugin;
   UserRoleEnumPlugin userRoleEnumPlugin;
   AuthInterceptorPlugin authInterceptorPlugin;
-  AuthCheckAnnotationPlugin authCheckAnnotationPlugin;
+  WithAuthPlugin authCheckAnnotationPlugin;
+  SnowflakeIdGeneratorImplPlugin snowflakeIdGeneratorImplPlugin;
+  SnowflakeIdGeneratorPlugin snowflakeIdGeneratorPlugin;
 
   public CustomizedPlugin() {
     super();
@@ -75,7 +84,9 @@ public class CustomizedPlugin extends PluginAdapter {
     webConfigPlugin = new WebConfigPlugin(properties);
     userRoleEnumPlugin = new UserRoleEnumPlugin(properties);
     authInterceptorPlugin = new AuthInterceptorPlugin(properties);
-    authCheckAnnotationPlugin = new AuthCheckAnnotationPlugin(properties);
+    authCheckAnnotationPlugin = new WithAuthPlugin(properties);
+    snowflakeIdGeneratorImplPlugin = new SnowflakeIdGeneratorImplPlugin(properties);
+    snowflakeIdGeneratorPlugin = new SnowflakeIdGeneratorPlugin(properties);
   }
 
   public boolean validate(List<String> warnings) {
@@ -95,7 +106,9 @@ public class CustomizedPlugin extends PluginAdapter {
         webConfigPlugin.validate(warnings) &&
         userRoleEnumPlugin.validate(warnings) &&
         authInterceptorPlugin.validate(warnings) &&
-        authCheckAnnotationPlugin.validate(warnings);
+        authCheckAnnotationPlugin.validate(warnings) &&
+        snowflakeIdGeneratorImplPlugin.validate(warnings) &&
+        snowflakeIdGeneratorPlugin.validate(warnings);
   }
 
   @Override
@@ -115,17 +128,27 @@ public class CustomizedPlugin extends PluginAdapter {
   @Override
   public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
     makeAnnotation(topLevelClass);
+    String modelClassName = introspectedTable.getBaseRecordType();
     for (IntrospectedColumn primaryKey : introspectedTable.getPrimaryKeyColumns()) {
       String javaProperty = primaryKey.getJavaProperty();
       for (Field field : topLevelClass.getFields()) {
         if (field.getName().equals(javaProperty)) {
           field.addAnnotation("@Id");
+          field.addAnnotation("@GeneratedValue(generator = \"snowflakeId\")");
+          field.addAnnotation(
+              String.format("@GenericGenerator(name = \"snowflakeId\", strategy = \"%s\")", modelClassName));
           topLevelClass.addImportedType("jakarta.persistence.Id");
-          field.addAnnotation("@GeneratedValue(strategy = GenerationType.IDENTITY)");
           topLevelClass.addImportedType("jakarta.persistence.GeneratedValue");
+          topLevelClass.addImportedType("org.hibernate.annotations.GenericGenerator");
         }
       }
     }
+    Method generateId = new Method("generateId");
+    generateId.addAnnotation("@PrePersist");
+    generateId.setVisibility(JavaVisibility.PUBLIC);
+    generateId.addBodyLine("if (this.id == null)");
+    generateId.addBodyLine("this.id = SnowflakeIdGenerator.getInstance().nextId();");
+    topLevelClass.addMethod(generateId);
     return true;
   }
 
@@ -156,6 +179,7 @@ public class CustomizedPlugin extends PluginAdapter {
     topLevelClass.addImportedType(new FullyQualifiedJavaType("jakarta.persistence.GeneratedValue"));
     topLevelClass.addImportedType(new FullyQualifiedJavaType("jakarta.persistence.GenerationType"));
     topLevelClass.addImportedType(new FullyQualifiedJavaType("org.hibernate.annotations.DynamicInsert"));
+    topLevelClass.addImportedType(new FullyQualifiedJavaType("jakarta.persistence.PrePersist"));
     topLevelClass.addAnnotation("@Data");
     topLevelClass.addAnnotation("@Entity");
     topLevelClass.addAnnotation("@DynamicInsert");
@@ -237,9 +261,16 @@ public class CustomizedPlugin extends PluginAdapter {
         .contextGenerateAdditionalJavaFiles(introspectedTable);
     additionalFiles.addAll(authCheckAnnotationPluginFiles);
 
+    List<GeneratedJavaFile> snowflakeIdGeneratorImplPluginFiles = snowflakeIdGeneratorImplPlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(snowflakeIdGeneratorImplPluginFiles);
+
+    List<GeneratedJavaFile> snowflakeIdGeneratorPluginiles = snowflakeIdGeneratorPlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(snowflakeIdGeneratorPluginiles);
+
     return additionalFiles;
   }
-
 
   public static void main(String[] args) {
     try {

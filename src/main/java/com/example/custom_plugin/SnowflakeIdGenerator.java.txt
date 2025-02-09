@@ -1,0 +1,112 @@
+package com.example.custom_plugin;
+
+import java.io.Serializable;
+import java.util.Properties;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.hibernate.HibernateException;
+import org.hibernate.MappingException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.id.Configurable;
+import org.hibernate.id.IdentifierGenerator;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.type.Type;
+
+public class SnowflakeIdGenerator  implements IdentifierGenerator, Configurable{
+  private final long twepoch = 1672531200000L; // 起始时间戳 (2023-01-01)
+  private final long workerIdBits = 5L; // 机器 ID 位数
+  private final long datacenterIdBits = 5L; // 数据中心 ID 位数
+  private final long sequenceBits = 12L; // 序列号位数
+
+  private final long maxWorkerId = (1L << workerIdBits) - 1;
+  private final long maxDatacenterId = (1L << datacenterIdBits) - 1;
+  private final long sequenceMask = (1L << sequenceBits) - 1;
+
+  private final long workerIdShift = sequenceBits;
+  private final long datacenterIdShift = sequenceBits + workerIdBits;
+  private final long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
+
+  private long workerId;
+  private long datacenterId;
+  private long sequence = 0L;
+  private long lastTimestamp = -1L;
+
+  public SnowflakeIdGenerator() {
+  }
+
+  // public SnowflakeIdGenerator(long workerId, long datacenterId) {
+  //   if (workerId > maxWorkerId || workerId < 0) {
+  //     throw new IllegalArgumentException("Worker ID out of range");
+  //   }
+  //   if (datacenterId > maxDatacenterId || datacenterId < 0) {
+  //     throw new IllegalArgumentException("Datacenter ID out of range");
+  //   }
+  //   this.workerId = workerId;
+  //   this.datacenterId = datacenterId;
+  // }
+
+  public synchronized long nextId() {
+    long timestamp = System.currentTimeMillis();
+
+    if (timestamp < lastTimestamp) {
+      throw new RuntimeException("Clock moved backwards. Refusing to generate ID");
+    }
+
+    if (timestamp == lastTimestamp) {
+      sequence = (sequence + 1) & sequenceMask;
+      if (sequence == 0) {
+        while ((timestamp = System.currentTimeMillis()) <= lastTimestamp) {
+          // 等待下一毫秒
+        }
+      }
+    } else {
+      sequence = 0;
+    }
+
+    lastTimestamp = timestamp;
+    return ((timestamp - twepoch) << timestampLeftShift)
+        | (datacenterId << datacenterIdShift)
+        | (workerId << workerIdShift)
+        | sequence;
+
+  }
+
+  // private static class Holder { // 静态内部类
+  //   private static final SnowflakeIdGenerator INSTANCE = new SnowflakeIdGenerator(1, 1);
+  // }
+
+  // public static SnowflakeIdGenerator getInstance() {
+  //   return Holder.INSTANCE; // 只有第一次调用时才初始化
+  // }
+
+  @Override
+  public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
+      // 例如：生成一个随机的正 Long 值（注意：实际使用时请确保生成逻辑能保证全局唯一）
+      long randomId = ThreadLocalRandom.current().nextLong();
+      return randomId < 0 ? -randomId : randomId;
+  }
+
+   @Override
+    public void configure(Type type, Properties parameters, ServiceRegistry serviceRegistry) throws MappingException {
+        // 从传入的参数中获取自定义注解定义的属性
+        String _workerId = parameters.getProperty("workerId", "1");
+        String _datacenterId = parameters.getProperty("datacenterId", "1");
+        try {
+            this.workerId = _workerId != null ? Integer.parseInt(_workerId) : 1;
+            this.datacenterId = _datacenterId != null ? Integer.parseInt(_datacenterId) : 1;
+        } catch (NumberFormatException e) {
+            throw new MappingException("Invalid incrementSize value: " + _workerId + ", " + _datacenterId, e);
+        }
+        if (workerId > maxWorkerId || workerId < 0) {
+          throw new IllegalArgumentException("Worker ID out of range");
+        }
+        if (datacenterId > maxDatacenterId || datacenterId < 0) {
+          throw new IllegalArgumentException("Datacenter ID out of range");
+        }
+    }
+
+  public static void main(String[] args) {
+    // SnowflakeIdGenerator generator = new SnowflakeIdGenerator(1, 1);
+    // System.out.println(generator.nextId());
+  }
+}

@@ -19,18 +19,18 @@ import org.mybatis.generator.api.dom.java.TypeParameter;
 
 import com.jayway.jsonpath.internal.function.Parameter;
 
-public class AuthCheckAnnotationPlugin extends PluginAdapter {
+public class WithAuthPlugin extends PluginAdapter {
 
   private String targetPackage;
 
   private Properties properties;
 
-  public AuthCheckAnnotationPlugin(Properties properties) {
+  public WithAuthPlugin(Properties properties) {
     super();
     this.properties = properties;
   }
 
-  public AuthCheckAnnotationPlugin() {
+  public WithAuthPlugin() {
     super();
   }
 
@@ -66,7 +66,7 @@ public class AuthCheckAnnotationPlugin extends PluginAdapter {
     String _modelName = Arrays.asList(strList).get(strList.length - 1);
 
     // modelClassName;
-    Interface annotation = new Interface(packageName + "." + "AuthCheck");
+    Interface annotation = new Interface(packageName + "." + "WithAuth");
     annotation.setVisibility(JavaVisibility.PUBLIC);
     //annotation.addTypeParameter(new TypeParameter ("@"));
 

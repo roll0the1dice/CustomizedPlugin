@@ -17,41 +17,42 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @Aspect
 @Component
 public class AuthInterceptor {
-    /** This is an example service. */
-    @Autowired
-    private UsersServiceImpl userService;
+  /** This is an example service. */
+  @Autowired
+  private UsersServiceImpl userService;
 
-    /**
-    * UseCase: 
-         * @throws Throwable 
-        * @AuthCheck(mustRole = UserRoleEnum.USER) 
-        * public String getMethodName(@RequestParam String param) {
-        *        return new String();
-        * }
-        */
-        @Around("@annotation(authCheck)")
-        public Object doInterceptor(ProceedingJoinPoint joinPoint, AuthCheck authCheck) throws Throwable {
-        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-        HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-        //if (userService.getCurrent(request) == null)
-        //throw new BadRequestException("User session not found");
-        UserRoleEnum mustRoleEnum = authCheck.mustRole();
-        if (mustRoleEnum == null) {
-            return joinPoint.proceed();
-        }
-        UserRoleEnum userRoleEnum = UserRoleEnum.USER;
-        //userRoleEnum = users.getUserRole();
-        if (userRoleEnum == null) {
-            throw new BadRequestException("Permission denied");
-        }
-        if (UserRoleEnum.BAN.equals(userRoleEnum)) {
-            throw new BadRequestException("Permission denied");
-        }
-        if (UserRoleEnum.ADMIN.equals(mustRoleEnum)) {
-            if (!UserRoleEnum.ADMIN.equals(userRoleEnum)) {
-                throw new BadRequestException("Permission denied");
-            }
-        }
-        return joinPoint.proceed();
+  /**
+   * UseCase:
+   * 
+   * @throws Throwable
+   * @WithAuth(mustRole = UserRoleEnum.USER)
+   *                    public String getMethodName(@RequestParam String param) {
+   *                    return new String();
+   *                    }
+   */
+  @Around("@annotation(withAuth)")
+  public Object doInterceptor(ProceedingJoinPoint joinPoint, WithAuth withAuth) throws Throwable {
+    RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+    HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+    // if (userService.getCurrent(request) == null)
+    // throw new BadRequestException("User session not found");
+    UserRoleEnum mustRoleEnum = withAuth.mustRole();
+    if (mustRoleEnum == null) {
+      return joinPoint.proceed();
     }
+    UserRoleEnum userRoleEnum = UserRoleEnum.USER;
+    // userRoleEnum = users.getUserRole();
+    if (userRoleEnum == null) {
+      throw new BadRequestException("Permission denied");
+    }
+    if (UserRoleEnum.BAN.equals(userRoleEnum)) {
+      throw new BadRequestException("Permission denied");
+    }
+    if (UserRoleEnum.ADMIN.equals(mustRoleEnum)) {
+      if (!UserRoleEnum.ADMIN.equals(userRoleEnum)) {
+        throw new BadRequestException("Permission denied");
+      }
+    }
+    return joinPoint.proceed();
+  }
 }

@@ -102,14 +102,14 @@ public class AuthInterceptorPlugin extends PluginAdapter {
     _doInterceptor.setVisibility(JavaVisibility.PUBLIC);
     _doInterceptor.addJavaDocLine("/**");
     _doInterceptor.addJavaDocLine("* UseCase: ");
-    _doInterceptor.addJavaDocLine("* @AuthCheck(mustRole = UserRoleEnum.USER) ");
+    _doInterceptor.addJavaDocLine("* @WithAuth(mustRole = UserRoleEnum.USER) ");
     _doInterceptor.addJavaDocLine("* public String getMethodName(@RequestParam String param) {");
     _doInterceptor.addJavaDocLine("*        return new String();");
     _doInterceptor.addJavaDocLine("* }");
     _doInterceptor.addJavaDocLine("*/");
-    _doInterceptor.addAnnotation("@Around(\"@annotation(authCheck)\")");
+    _doInterceptor.addAnnotation("@Around(\"@annotation(withAuth)\")");
     Parameter page = new Parameter(new FullyQualifiedJavaType("org.aspectj.lang.ProceedingJoinPoint"), "joinPoint");
-    Parameter size = new Parameter(new FullyQualifiedJavaType(packageName + "." + "AuthCheck"), "authCheck");
+    Parameter size = new Parameter(new FullyQualifiedJavaType(packageName + "." + "WithAuth"), "withAuth");
     _doInterceptor.addParameter(page);
     _doInterceptor.addParameter(size);
     _doInterceptor.setReturnType(new FullyQualifiedJavaType("java.lang.Object"));
@@ -118,7 +118,7 @@ public class AuthInterceptorPlugin extends PluginAdapter {
         "HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();",
         "//if (userService.getCurrent(request) == null)",
         "//throw new BadRequestException(\"User session not found\");",
-        "UserRoleEnum mustRoleEnum = authCheck.mustRole();",
+        "UserRoleEnum mustRoleEnum = withAuth.mustRole();",
         "if (mustRoleEnum == null) {",
         "return joinPoint.proceed();",
         "}",

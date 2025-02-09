@@ -134,21 +134,13 @@ public class CustomizedPlugin extends PluginAdapter {
       for (Field field : topLevelClass.getFields()) {
         if (field.getName().equals(javaProperty)) {
           field.addAnnotation("@Id");
-          field.addAnnotation("@GeneratedValue(generator = \"snowflakeId\")");
-          field.addAnnotation(
-              String.format("@GenericGenerator(name = \"snowflakeId\", strategy = \"%s\")", modelClassName));
+          field.addAnnotation("@GeneratedValue ");
+          field.addAnnotation("@SnowflakeIdGenerator(workerId=12, datacenterId=12)");
           topLevelClass.addImportedType("jakarta.persistence.Id");
           topLevelClass.addImportedType("jakarta.persistence.GeneratedValue");
-          topLevelClass.addImportedType("org.hibernate.annotations.GenericGenerator");
         }
       }
     }
-    Method generateId = new Method("generateId");
-    generateId.addAnnotation("@PrePersist");
-    generateId.setVisibility(JavaVisibility.PUBLIC);
-    generateId.addBodyLine("if (this.id == null)");
-    generateId.addBodyLine("this.id = SnowflakeIdGenerator.getInstance().nextId();");
-    topLevelClass.addMethod(generateId);
     return true;
   }
 

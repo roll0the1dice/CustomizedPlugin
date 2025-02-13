@@ -47,29 +47,25 @@ public class UsersBaseService {
         return repository.save(newUsers);
     }
 
-    public EntityModel<Users> one(@PathVariable Long id) {
+    public Users one(@PathVariable Long id) {
         Users users = repository.findById(id)
         .orElseThrow(() -> new UsersNotFoundException(id));
-        return assembler.toModel(users);
+        return users;
     }
 
-    public ResponseEntity<?> replaceUsers(@RequestBody Users newUsers, @PathVariable Long id) {
+    public Users replaceUsers(@RequestBody Users newUsers, @PathVariable Long id) {
         Users _updateModel = repository.findById(id)
         .map(_newUsers -> {
             //_newTestUser.setId(newTestUser.getId());
             return repository.save(_newUsers);
         })
-        .orElseGet(() -> {
-            return repository.save(newUsers);
-        });
+        .orElseThrow(() -> new UsersNotFoundException(id));
         EntityModel<Users> entityModel = assembler.toModel(_updateModel);
-        return ResponseEntity
-        .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
-        .body(entityModel);
+        return _updateModel;
     }
 
-    public ResponseEntity<?> deleteUsers(@PathVariable Long id) {
+    public Boolean deleteUsers(@PathVariable Long id) {
         repository.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return true;
     }
 }

@@ -166,12 +166,13 @@ public class BaseServicePlugin extends PluginAdapter {
         parameter  = new Parameter(new FullyQualifiedJavaType("java.lang.Long"), "id");
         parameter.addAnnotation("@PathVariable");
         _getOne.addParameter(parameter);
-        FullyQualifiedJavaType _retTypeForOne = new FullyQualifiedJavaType("org.springframework.hateoas.EntityModel");
-        _retTypeForOne.addTypeArgument(new FullyQualifiedJavaType(modelClassName));
+        //FullyQualifiedJavaType _retTypeForOne = new FullyQualifiedJavaType("org.springframework.hateoas.EntityModel");
+        //_retTypeForOne.addTypeArgument(new FullyQualifiedJavaType(modelClassName));
+        FullyQualifiedJavaType _retTypeForOne = new FullyQualifiedJavaType(modelClassName);
         _getOne.setReturnType(_retTypeForOne);
         String[] strParameter2 = {String.format("%s %s = repository.findById(id)", _modelName, _modelName.toLowerCase()), 
                                     String.format(".orElseThrow(() -> new %sNotFoundException(id));", _modelName),
-                                String.format("return assembler.toModel(%s);", _modelName.toLowerCase())};
+                                String.format("return %s;", _modelName.toLowerCase())};
         // 将数组转换为 List<String>
         List<String> stringList = Arrays.asList(strParameter2);
         // 将 List<String> 赋值给 Collection<String>
@@ -190,19 +191,18 @@ public class BaseServicePlugin extends PluginAdapter {
         parameter  = new Parameter(new FullyQualifiedJavaType("java.lang.Long"), "id");
         parameter.addAnnotation("@PathVariable");
         _replace.addParameter(parameter);
-        _replace.setReturnType(new FullyQualifiedJavaType("ResponseEntity<?> "));
+        //FullyQualifiedJavaType _retType = new FullyQualifiedJavaType("org.springframework.http.ResponseEntity");
+        FullyQualifiedJavaType _retType = new FullyQualifiedJavaType(modelClassName);
+        //_retType.addTypeArgument(new FullyQualifiedJavaType(modelClassName));
+        _replace.setReturnType(_retType);
         String[] strParameter3 = {String.format("%s _updateModel = repository.findById(id)", _modelName, _modelName.toLowerCase()), 
                                     String.format(".map(%s -> {", "_new" + _modelName),
                                     "//_newTestUser.setId(newTestUser.getId());",
                                     String.format("return repository.save(%s);", "_new" + _modelName),
                                     "})",
-                                    ".orElseGet(() -> {",
-                                    String.format("return repository.save(%s);", "new" + _modelName),
-                                    "});",
+                                    String.format(".orElseThrow(() -> new %sNotFoundException(id));", _modelName),
                                     String.format("%s entityModel = assembler.toModel(_updateModel);", _entityType.getShortName()),
-                                    "return ResponseEntity",
-                                    ".created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())",
-                                    ".body(entityModel);"};
+                                    "return _updateModel;"};
         // 将数组转换为 List<String>
         List<String> stringList3 = Arrays.asList(strParameter3);
         // 将 List<String> 赋值给 Collection<String>
@@ -218,8 +218,10 @@ public class BaseServicePlugin extends PluginAdapter {
         parameter.addAnnotation("@PathVariable");
         _delete.addParameter(parameter);
         _delete.addBodyLine("repository.deleteById(id);");
-        _delete.addBodyLine("return ResponseEntity.noContent().build();");
-        _delete.setReturnType(new FullyQualifiedJavaType("ResponseEntity<?>"));
+        _delete.addBodyLine("return true;");
+        //_retType = new FullyQualifiedJavaType("org.springframework.http.ResponseEntity");
+        _retType = new FullyQualifiedJavaType("java.lang.Boolean");
+        _delete.setReturnType(_retType);
         topLevelClass.addMethod(_delete);
 
         // Use DefaultJavaFormatter to format the generated Java file

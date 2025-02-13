@@ -37,7 +37,7 @@
         </javaClientGenerator>
 
         <!-- Database Table -->
-        <table schema="ATest" tableName="users" domainObjectName="Users">
+        <table schema="ATest"  tableName="users" domainObjectName="Users">
           <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
         </table>
 

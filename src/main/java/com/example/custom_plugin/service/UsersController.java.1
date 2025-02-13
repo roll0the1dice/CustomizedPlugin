@@ -30,27 +30,27 @@ public class UsersController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> all(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+    public ResponseEntity<ApiResponse<CustomPageImpl<Users>>> all(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
         return ApiResponse.success(service.all(page,size));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody Users newUsers) {
+    public ResponseEntity<ApiResponse<Users>> create(@RequestBody Users newUsers) {
         return ApiResponse.success(service.create(newUsers));
     }
 
     @GetMapping("/one/{id}")
-    public ResponseEntity<?> one(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Users>> one(@PathVariable Long id) {
         return ApiResponse.success(service.one(id));
     }
 
     @PutMapping("/replaceUsers/{id}")
-    public ResponseEntity<?> replaceUsers(@RequestBody Users newUsers, @PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Users>> replaceUsers(@RequestBody Users newUsers, @PathVariable Long id) {
         return ApiResponse.success(service.replaceUsers(newUsers,id));
     }
 
     @DeleteMapping("/deleteUsers/{id}")
-    public ResponseEntity<?> deleteUsers(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Boolean>> deleteUsers(@PathVariable Long id) {
         return ApiResponse.success(service.deleteUsers(id));
     }
 }

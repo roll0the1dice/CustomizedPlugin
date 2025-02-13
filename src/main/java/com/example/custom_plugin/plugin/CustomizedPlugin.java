@@ -135,7 +135,7 @@ public class CustomizedPlugin extends PluginAdapter {
         if (field.getName().equals(javaProperty)) {
           field.addAnnotation("@Id");
           field.addAnnotation("@GeneratedValue ");
-          field.addAnnotation("@SnowflakeIdGenerator(workerId=12, datacenterId=12)");
+          field.addAnnotation("@SnowflakeIdGenerator(workerId=1, datacenterId=1)");
           topLevelClass.addImportedType("jakarta.persistence.Id");
           topLevelClass.addImportedType("jakarta.persistence.GeneratedValue");
         }

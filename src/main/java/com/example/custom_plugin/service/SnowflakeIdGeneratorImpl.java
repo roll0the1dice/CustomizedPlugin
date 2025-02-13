@@ -55,8 +55,8 @@ public class SnowflakeIdGeneratorImpl implements IdentifierGenerator {
 
     public SnowflakeIdGeneratorImpl() {
         twepoch = 1672531200000L;
-        workerIdBits = 5L;
-        datacenterIdBits = 5L;
+        workerIdBits = 4L;
+        datacenterIdBits = 2L;
         sequenceBits = 12L;
         
         maxWorkerId = (1L << workerIdBits) - 1;

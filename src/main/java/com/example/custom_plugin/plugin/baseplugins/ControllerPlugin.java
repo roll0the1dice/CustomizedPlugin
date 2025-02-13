@@ -121,9 +121,13 @@ public class ControllerPlugin extends PluginAdapter {
     size.addAnnotation("@RequestParam(defaultValue = \"10\")");
     _getAll.addParameter(page);
     _getAll.addParameter(size);
-    FullyQualifiedJavaType _retTypeForOne = new FullyQualifiedJavaType("org.springframework.http.ResponseEntity");
-    _retTypeForOne.addTypeArgument(new FullyQualifiedJavaType("?"));
-    _getAll.setReturnType(_retTypeForOne);
+    FullyQualifiedJavaType _retTypeForAll = new FullyQualifiedJavaType("org.springframework.http.ResponseEntity");
+    FullyQualifiedJavaType _retTypeForAll_2 = new FullyQualifiedJavaType("ApiResponse");
+    FullyQualifiedJavaType _retTypeForAll_3 = new FullyQualifiedJavaType("CustomPageImpl");
+    _retTypeForAll_3.addTypeArgument(new FullyQualifiedJavaType(modelClassName));
+    _retTypeForAll_2.addTypeArgument(_retTypeForAll_3);
+    _retTypeForAll.addTypeArgument(_retTypeForAll_2);
+    _getAll.setReturnType(_retTypeForAll);
     _getAll.addBodyLine(String.format("return ApiResponse.success(service.%s(page,size));", _getAll.getName()));
     topLevelClass.addMethod(_getAll);
 
@@ -135,7 +139,9 @@ public class ControllerPlugin extends PluginAdapter {
     parameter.addAnnotation("@RequestBody");
     _saveNew.addParameter(parameter);
     FullyQualifiedJavaType _retTypeForCreate = new FullyQualifiedJavaType("org.springframework.http.ResponseEntity");
-    _retTypeForCreate.addTypeArgument(new FullyQualifiedJavaType("?"));
+    FullyQualifiedJavaType _retTypeForCreate_2 = new FullyQualifiedJavaType("ApiResponse");
+    _retTypeForCreate_2.addTypeArgument(new FullyQualifiedJavaType(modelClassName));
+    _retTypeForCreate.addTypeArgument(_retTypeForCreate_2);
     _saveNew.setReturnType(_retTypeForCreate);
     _saveNew.addBodyLine(String.format("return ApiResponse.success(service.%s(%s));", _saveNew.getName(),
     _saveNew.getParameters().get(0).getName()));
@@ -147,8 +153,10 @@ public class ControllerPlugin extends PluginAdapter {
     parameter = new Parameter(new FullyQualifiedJavaType("java.lang.Long"), "id");
     parameter.addAnnotation("@PathVariable");
     _getOne.addParameter(parameter);
-    _retTypeForOne = new FullyQualifiedJavaType("org.springframework.http.ResponseEntity");
-    _retTypeForOne.addTypeArgument(new FullyQualifiedJavaType("?"));
+    FullyQualifiedJavaType _retTypeForOne = new FullyQualifiedJavaType("org.springframework.http.ResponseEntity");
+    FullyQualifiedJavaType _retTypeForOne_2 = new FullyQualifiedJavaType("ApiResponse");
+    _retTypeForOne_2.addTypeArgument(new FullyQualifiedJavaType(modelClassName));
+    _retTypeForOne.addTypeArgument(_retTypeForOne_2);
     _getOne.setReturnType(_retTypeForOne);
     _getOne.addBodyLine(String.format("return ApiResponse.success(service.%s(%s));", _getOne.getName(),
         _getOne.getParameters().get(0).getName()));
@@ -163,10 +171,15 @@ public class ControllerPlugin extends PluginAdapter {
     parameter = new Parameter(new FullyQualifiedJavaType("java.lang.Long"), "id");
     parameter.addAnnotation("@PathVariable");
     _replace.addParameter(parameter);
-    _replace.setReturnType(new FullyQualifiedJavaType("ResponseEntity<?> "));
+    FullyQualifiedJavaType _retTypeForReplace = new FullyQualifiedJavaType("org.springframework.http.ResponseEntity");
+    FullyQualifiedJavaType _retTypeForReplace_2 = new FullyQualifiedJavaType("ApiResponse");
+    _retTypeForReplace_2.addTypeArgument(new FullyQualifiedJavaType(modelClassName));
+    _retTypeForReplace.addTypeArgument(_retTypeForReplace_2);
+    _replace.setReturnType(_retTypeForReplace);
     _replace.addBodyLine(String.format("return ApiResponse.success(service.%s(%s,%s));", _replace.getName(),
-        _replace.getParameters().get(0).getName(), _replace.getParameters().get(1).getName()));
+    _replace.getParameters().get(0).getName(), _replace.getParameters().get(1).getName()));
     topLevelClass.addMethod(_replace);
+
 
     Method _delete = new Method("delete" + _modelName);
     _delete.addAnnotation(String.format("@DeleteMapping(\"/%s/{id}\")", _delete.getName()));
@@ -176,8 +189,12 @@ public class ControllerPlugin extends PluginAdapter {
     parameter.addAnnotation("@PathVariable");
     _delete.addParameter(parameter);
     _delete.addBodyLine(String.format("return ApiResponse.success(service.%s(%s));", _delete.getName(),
-        _delete.getParameters().get(0).getName()));
-    _delete.setReturnType(new FullyQualifiedJavaType("ResponseEntity<?>"));
+    _delete.getParameters().get(0).getName()));
+    FullyQualifiedJavaType _retTypeForDelete = new FullyQualifiedJavaType("org.springframework.http.ResponseEntity");
+    FullyQualifiedJavaType _retTypeForDelete_2 = new FullyQualifiedJavaType("ApiResponse");
+    _retTypeForDelete_2.addTypeArgument(new FullyQualifiedJavaType("java.lang.Boolean"));
+    _retTypeForDelete.addTypeArgument(_retTypeForDelete_2);
+    _delete.setReturnType(_retTypeForDelete);
     topLevelClass.addMethod(_delete);
 
     // Use DefaultJavaFormatter to format the generated Java file

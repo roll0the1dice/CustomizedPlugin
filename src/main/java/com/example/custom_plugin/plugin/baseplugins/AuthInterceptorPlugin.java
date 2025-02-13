@@ -119,8 +119,12 @@ public class AuthInterceptorPlugin extends PluginAdapter {
         "//if (userService.getCurrent(request) == null)",
         "//throw new BadRequestException(\"User session not found\");",
         "UserRoleEnum mustRoleEnum = withAuth.mustRole();",
+        "try {",
         "if (mustRoleEnum == null) {",
         "return joinPoint.proceed();",
+        "}",
+        "}catch (Throwable e) {",
+        "throw new RuntimeException(\"Internal Server Error\");",
         "}",
         "UserRoleEnum userRoleEnum = UserRoleEnum.USER;",
         "//userRoleEnum = users.getUserRole();",
@@ -135,7 +139,11 @@ public class AuthInterceptorPlugin extends PluginAdapter {
         "throw new BadRequestException(\"Permission denied\");",
         "}",
         "}",
-        "return joinPoint.proceed();" };
+        "try {",
+        "return joinPoint.proceed();",
+        "}catch (Throwable e) {",
+        "throw new RuntimeException(\"Internal Server Error\");",
+        "}" };
     List<String> _tmpstringList = Arrays.asList(_tmpParameters);
     Collection<String> _tmpstringCollection = _tmpstringList;
     _doInterceptor.addBodyLines(_tmpstringCollection);

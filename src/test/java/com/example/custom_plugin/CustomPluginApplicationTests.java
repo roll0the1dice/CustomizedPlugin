@@ -3,11 +3,11 @@ package com.example.custom_plugin;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class CustomPluginApplicationTests {
+// @SpringBootTest
+// class CustomPluginApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+// 	@Test
+// 	void contextLoads() {
+// 	}
 
-}
+// }

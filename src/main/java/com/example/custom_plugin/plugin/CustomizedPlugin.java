@@ -15,6 +15,7 @@ import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.internal.DefaultShellCallback;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ResourceUtils;
 
 import com.example.custom_plugin.plugin.baseplugins.ApiResponsePlugin;
@@ -264,11 +265,55 @@ public class CustomizedPlugin extends PluginAdapter {
     return additionalFiles;
   }
 
+  public void run() {
+    try {
+      // 指定 generatorConfig.xml 配置文件的路径
+      ClassPathResource resource = new ClassPathResource("");
+      String classpath = resource.getPath();
+      String configFilePath = Paths.get(classpath, "generatorConfig.xml").toString();
+
+      // 准备 MyBatis Generator 的配置
+      List<String> warnings = new ArrayList<>();
+      boolean overwrite = false;
+      File configFile = new File(configFilePath);
+
+      // System.out.println(configFilePath);
+
+      ConfigurationParser cp = new ConfigurationParser(warnings);
+      Configuration config = cp.parseConfiguration(configFile);
+      DefaultShellCallback callback = new DefaultShellCallback(overwrite);
+
+      // 执行 MyBatis Generator
+      MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, callback, warnings);
+      myBatisGenerator.generate(null);
+
+      // 输出警告信息
+      for (String warning : warnings) {
+        System.out.println(warning);
+      }
+
+      System.out.println("MyBatis Generator sucesses !");
+
+      System.exit(0); // 正常退出
+
+    } catch (Exception e) {
+      System.out.println("MyBatis Generator fails !");
+      e.printStackTrace();
+    }
+
+  }
+
   public static void main(String[] args) {
     try {
       // 指定 generatorConfig.xml 配置文件的路径
-      String classpath = ResourceUtils.getFile("classpath:").getAbsolutePath();
+      ClassPathResource resource = new ClassPathResource("/");
+      String classpath = resource.getFile().getAbsolutePath();
+      //String classpath = ResourceUtils.getFile("classpath:").getAbsolutePath();
       String configFilePath = Paths.get(classpath, "generatorConfig.xml").toString();
+
+      System.out.println(classpath);
+
+      System.exit(0);
 
       // 准备 MyBatis Generator 的配置
       List<String> warnings = new ArrayList<>();

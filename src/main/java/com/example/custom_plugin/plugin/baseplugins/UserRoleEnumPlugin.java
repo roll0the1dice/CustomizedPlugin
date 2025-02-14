@@ -75,7 +75,7 @@ public class UserRoleEnumPlugin extends PluginAdapter {
     topLevelEnumeration.addJavaDocLine(" */");
 
     // Add a private field
-    topLevelEnumeration.addField(new Field("USER(\"user\"), ADMIN(\"admin\"), BAN(\"baned user\")", new FullyQualifiedJavaType("")));
+    topLevelEnumeration.addField(new Field("USER(\"user\", 0), ADMIN(\"admin\", 1), BAN(\"baned user\", 2)", new FullyQualifiedJavaType("")));
     //topLevelEnumeration.addField(new Field("ADMIN(\"admin\")", new FullyQualifiedJavaType("")));
     //topLevelEnumeration.addField(new Field("BAN(\"baned user\")", new FullyQualifiedJavaType("")));
 
@@ -84,6 +84,11 @@ public class UserRoleEnumPlugin extends PluginAdapter {
     _description.setVisibility(JavaVisibility.PRIVATE);
     _description.addJavaDocLine("/** This is an example UserRoleEnum. */");
     topLevelEnumeration.addField(_description);
+
+    var _value = new Field ("value", new FullyQualifiedJavaType("java.lang.Integer"));
+    _value.setVisibility(JavaVisibility.PRIVATE);
+    _value.addJavaDocLine("/** This is an example UserRoleEnum. */");
+    topLevelEnumeration.addField(_value);
 
     Method _defaultconstructor = new Method("UserRoleEnum");
     _defaultconstructor.setConstructor(true);
@@ -96,7 +101,9 @@ public class UserRoleEnumPlugin extends PluginAdapter {
     //_constructor.setVisibility(JavaVisibility.PUBLIC);
     Parameter parameter  = new Parameter(new FullyQualifiedJavaType("java.lang.String"), "description");
     _constructor.addParameter(parameter);
+    _constructor.addParameter(new Parameter(new FullyQualifiedJavaType("java.lang.Integer"), "value"));
     _constructor.addBodyLine("this.description = description;");
+    _constructor.addBodyLine("this.value = value;");
     topLevelEnumeration.addMethod(_constructor);
 
     Method _getDescription= new Method("getDescription");
@@ -104,6 +111,12 @@ public class UserRoleEnumPlugin extends PluginAdapter {
     _getDescription.addBodyLine("return description;");
     _getDescription.setReturnType(new FullyQualifiedJavaType("java.lang.String"));
     topLevelEnumeration.addMethod(_getDescription);
+
+    Method _getValue = new Method("getValue");
+    //_getDescription.setVisibility(JavaVisibility.PUBLIC);
+    _getValue.addBodyLine("return value;");
+    _getValue.setReturnType(new FullyQualifiedJavaType("java.lang.Integer"));
+    topLevelEnumeration.addMethod(_getValue);
   
    // Use DefaultJavaFormatter to format the generated Java file
     DefaultJavaFormatter javaFormatter = new DefaultJavaFormatter();

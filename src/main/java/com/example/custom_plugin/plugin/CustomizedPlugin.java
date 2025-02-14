@@ -8,41 +8,17 @@ import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.Field;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Interface;
-import org.mybatis.generator.api.dom.java.JavaVisibility;
-import org.mybatis.generator.api.dom.java.Method;
-import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.internal.DefaultShellCallback;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ResourceUtils;
 
-import com.example.custom_plugin.plugin.baseplugins.ApiResponsePlugin;
-import com.example.custom_plugin.plugin.baseplugins.WithAuthPlugin;
-import com.example.custom_plugin.plugin.baseplugins.AuthInterceptorPlugin;
-import com.example.custom_plugin.plugin.baseplugins.BaseServicePlugin;
-import com.example.custom_plugin.plugin.baseplugins.ControllerPlugin;
-import com.example.custom_plugin.plugin.baseplugins.CustomPageImplPlugin;
-import com.example.custom_plugin.plugin.baseplugins.CustomSpecsPlugin;
-import com.example.custom_plugin.plugin.baseplugins.GlobalExceptionAdvicePlugin;
-import com.example.custom_plugin.plugin.baseplugins.ModelAssemblerPlugin;
-import com.example.custom_plugin.plugin.baseplugins.NotFoundAdvicePlugin;
-import com.example.custom_plugin.plugin.baseplugins.NotFoundExceptionPlugin;
-import com.example.custom_plugin.plugin.baseplugins.RepositoryPlugin;
-import com.example.custom_plugin.plugin.baseplugins.BadRequestExceptionPlugin;
-import com.example.custom_plugin.plugin.baseplugins.ServiceImplPlugin;
-import com.example.custom_plugin.plugin.baseplugins.ServicePlugin;
-import com.example.custom_plugin.plugin.baseplugins.SnowflakeIdGeneratorImplPlugin;
-import com.example.custom_plugin.plugin.baseplugins.SnowflakeIdGeneratorPlugin;
-import com.example.custom_plugin.plugin.baseplugins.UserRoleEnumPlugin;
-import com.example.custom_plugin.plugin.baseplugins.WebConfigPlugin;
+import com.example.custom_plugin.plugin.baseplugins.*;
 
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -66,6 +42,7 @@ public class CustomizedPlugin extends PluginAdapter {
   WithAuthPlugin authCheckAnnotationPlugin;
   SnowflakeIdGeneratorImplPlugin snowflakeIdGeneratorImplPlugin;
   SnowflakeIdGeneratorPlugin snowflakeIdGeneratorPlugin;
+  ErrorCodePlugin errorCodePlugin;
 
   public CustomizedPlugin() {
     super();
@@ -88,6 +65,7 @@ public class CustomizedPlugin extends PluginAdapter {
     authCheckAnnotationPlugin = new WithAuthPlugin(properties);
     snowflakeIdGeneratorImplPlugin = new SnowflakeIdGeneratorImplPlugin(properties);
     snowflakeIdGeneratorPlugin = new SnowflakeIdGeneratorPlugin(properties);
+    errorCodePlugin = new ErrorCodePlugin(properties);
   }
 
   public boolean validate(List<String> warnings) {
@@ -109,7 +87,8 @@ public class CustomizedPlugin extends PluginAdapter {
         authInterceptorPlugin.validate(warnings) &&
         authCheckAnnotationPlugin.validate(warnings) &&
         snowflakeIdGeneratorImplPlugin.validate(warnings) &&
-        snowflakeIdGeneratorPlugin.validate(warnings);
+        snowflakeIdGeneratorPlugin.validate(warnings) &&
+        errorCodePlugin.validate(warnings);
   }
 
   @Override
@@ -258,9 +237,13 @@ public class CustomizedPlugin extends PluginAdapter {
         .contextGenerateAdditionalJavaFiles(introspectedTable);
     additionalFiles.addAll(snowflakeIdGeneratorImplPluginFiles);
 
-    List<GeneratedJavaFile> snowflakeIdGeneratorPluginiles = snowflakeIdGeneratorPlugin
+    List<GeneratedJavaFile> snowflakeIdGeneratorPluginfiles = snowflakeIdGeneratorPlugin
         .contextGenerateAdditionalJavaFiles(introspectedTable);
-    additionalFiles.addAll(snowflakeIdGeneratorPluginiles);
+    additionalFiles.addAll(snowflakeIdGeneratorPluginfiles);
+
+    List<GeneratedJavaFile> errorCodePluginfiles = errorCodePlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(errorCodePluginfiles);
 
     return additionalFiles;
   }
@@ -268,8 +251,7 @@ public class CustomizedPlugin extends PluginAdapter {
   public void run() {
     try {
       // 指定 generatorConfig.xml 配置文件的路径
-      ClassPathResource resource = new ClassPathResource("");
-      String classpath = resource.getPath();
+      String classpath = ResourceUtils.getFile("classpath:").getAbsolutePath();
       String configFilePath = Paths.get(classpath, "generatorConfig.xml").toString();
 
       // 准备 MyBatis Generator 的配置
@@ -306,14 +288,11 @@ public class CustomizedPlugin extends PluginAdapter {
   public static void main(String[] args) {
     try {
       // 指定 generatorConfig.xml 配置文件的路径
-      ClassPathResource resource = new ClassPathResource("/");
-      String classpath = resource.getFile().getAbsolutePath();
-      //String classpath = ResourceUtils.getFile("classpath:").getAbsolutePath();
+
+      String classpath = ResourceUtils.getFile("classpath:").getAbsolutePath();
       String configFilePath = Paths.get(classpath, "generatorConfig.xml").toString();
 
       System.out.println(classpath);
-
-      System.exit(0);
 
       // 准备 MyBatis Generator 的配置
       List<String> warnings = new ArrayList<>();

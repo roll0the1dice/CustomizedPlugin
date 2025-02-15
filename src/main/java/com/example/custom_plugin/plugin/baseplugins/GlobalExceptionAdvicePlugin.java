@@ -69,6 +69,7 @@ public class GlobalExceptionAdvicePlugin extends PluginAdapter {
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.http.converter.HttpMessageNotReadableException"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.bind.MissingServletRequestParameterException"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.method.annotation.MethodArgumentTypeMismatchException"));
+        topLevelClass.addImportedType(new FullyQualifiedJavaType("io.swagger.v3.oas.annotations.Hidden"));
 
         // Add class documentation
         topLevelClass.addJavaDocLine("/**");
@@ -76,6 +77,7 @@ public class GlobalExceptionAdvicePlugin extends PluginAdapter {
         topLevelClass.addJavaDocLine(" */");
 
         topLevelClass.addAnnotation("@RestControllerAdvice");
+        topLevelClass.addAnnotation("@Hidden");
 
         Method _notFoundHandler = new Method("GlobalExceptionAdvice");
         _notFoundHandler.addAnnotation("@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)");

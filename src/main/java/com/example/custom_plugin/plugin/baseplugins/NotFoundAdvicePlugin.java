@@ -65,7 +65,7 @@ public class NotFoundAdvicePlugin extends PluginAdapter {
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.bind.annotation.ExceptionHandler"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.bind.annotation.ResponseStatus"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.bind.annotation.RestControllerAdvice"));
-
+        topLevelClass.addImportedType(new FullyQualifiedJavaType("io.swagger.v3.oas.annotations.Hidden"));
 
         // Add class documentation
         topLevelClass.addJavaDocLine("/**");
@@ -73,6 +73,7 @@ public class NotFoundAdvicePlugin extends PluginAdapter {
         topLevelClass.addJavaDocLine(" */");
 
         topLevelClass.addAnnotation("@RestControllerAdvice");
+        topLevelClass.addAnnotation("@Hidden");
 
         Method _notFoundHandler = new Method(_modelName + "NotFoundHandler");
         _notFoundHandler.addAnnotation(String.format("@ExceptionHandler(%s.class)", _modelName+"NotFoundException"));

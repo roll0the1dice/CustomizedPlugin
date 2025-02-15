@@ -43,6 +43,9 @@ public class CustomizedPlugin extends PluginAdapter {
   SnowflakeIdGeneratorImplPlugin snowflakeIdGeneratorImplPlugin;
   SnowflakeIdGeneratorPlugin snowflakeIdGeneratorPlugin;
   ErrorCodePlugin errorCodePlugin;
+  StringUitlsPlugin stringUitlsPlugin;
+  GlobalConstantPlugin globalConstantPlugin;
+  RequestDTOPlugin requestDTOPlugin;
 
   public CustomizedPlugin() {
     super();
@@ -66,6 +69,9 @@ public class CustomizedPlugin extends PluginAdapter {
     snowflakeIdGeneratorImplPlugin = new SnowflakeIdGeneratorImplPlugin(properties);
     snowflakeIdGeneratorPlugin = new SnowflakeIdGeneratorPlugin(properties);
     errorCodePlugin = new ErrorCodePlugin(properties);
+    stringUitlsPlugin = new StringUitlsPlugin(properties);
+    globalConstantPlugin = new GlobalConstantPlugin(properties);
+    requestDTOPlugin = new RequestDTOPlugin(properties);
   }
 
   public boolean validate(List<String> warnings) {
@@ -88,7 +94,10 @@ public class CustomizedPlugin extends PluginAdapter {
         authCheckAnnotationPlugin.validate(warnings) &&
         snowflakeIdGeneratorImplPlugin.validate(warnings) &&
         snowflakeIdGeneratorPlugin.validate(warnings) &&
-        errorCodePlugin.validate(warnings);
+        errorCodePlugin.validate(warnings) &&
+        stringUitlsPlugin.validate(warnings) &&
+        globalConstantPlugin.validate(warnings) &&
+        requestDTOPlugin.validate(warnings);
   }
 
   @Override
@@ -244,6 +253,18 @@ public class CustomizedPlugin extends PluginAdapter {
     List<GeneratedJavaFile> errorCodePluginfiles = errorCodePlugin
         .contextGenerateAdditionalJavaFiles(introspectedTable);
     additionalFiles.addAll(errorCodePluginfiles);
+
+    List<GeneratedJavaFile> stringUitlsPluginfiles = stringUitlsPlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(stringUitlsPluginfiles);
+
+    List<GeneratedJavaFile> requestDTOPluginfiles = requestDTOPlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(requestDTOPluginfiles);
+
+    List<GeneratedJavaFile> globalConstantPluginfiles = globalConstantPlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(globalConstantPluginfiles);
 
     return additionalFiles;
   }

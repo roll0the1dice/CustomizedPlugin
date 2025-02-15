@@ -103,6 +103,20 @@
 - `javaClientGenerator`: Mapper 接口生成路径。
 - `table`: 配置要生成的表，`tableName` 为数据库表名，`domainObjectName` 为生成的 `Java` 类名。
 
+## 运行
+在SpringBootApplication类的目录下新键一个plugin/plugin.java文件。写入一下内容，然后执行就可以看到文件生成了。如果要修改生成的目录的位置，可以修改插件中的值`<property name="targetPackage" value="com.example.custom_plugin.service"/>`, 把`value="com.example.custom_pluginservice`改成你要的目录. 譬如,`value="com.example.yourproject`.s
+
+```java
+package com.example.smartBI.plugin;
+
+import com.example.custom_plugin.plugin.CustomizedPlugin;
+
+public class Plugin {
+  public static void main(String[] args) {
+    new CustomizedPlugin().run();
+  }
+}
+```
 
 
 ## 自定义插件 (CustomizedPlugin.java)

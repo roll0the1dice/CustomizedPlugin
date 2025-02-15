@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>custom-plugin</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>custom-plugin</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
@@ -43,10 +43,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-hateoas</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+		</dependency> -->
 
 
 		<dependency>
@@ -88,7 +88,7 @@
 			<optional>true</optional> <!-- Important: Set to true -->
 		</dependency>
 
-   <dependency>
+   <!-- <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
       <version>2.6.0</version>
@@ -98,7 +98,7 @@
     <groupId>com.github.xiaoymin</groupId>
     <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
     <version>4.4.0</version>
-  </dependency>	
+  </dependency>	 -->
 	</dependencies>
 
 </project>

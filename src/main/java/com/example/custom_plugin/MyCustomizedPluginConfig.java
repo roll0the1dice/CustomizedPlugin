@@ -14,8 +14,8 @@ import lombok.Data;
 
 
 @AutoConfiguration
-// @ConfigurationProperties(prefix = "exmpale.custom-plugin")
-// @EnableConfigurationProperties(MyCustomizedPluginConfig.class)
+@ConfigurationProperties(prefix = "exmpale.custom-plugin")
+@EnableConfigurationProperties(MyCustomizedPluginConfig.class)
 @Data
 @ComponentScan
 public class MyCustomizedPluginConfig {

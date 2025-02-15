@@ -12,6 +12,7 @@ import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.internal.DefaultShellCallback;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ResourceUtils;
 
 import com.example.custom_plugin.plugin.baseplugins.*;
@@ -272,8 +273,11 @@ public class CustomizedPlugin extends PluginAdapter {
   public void run() {
     try {
       // 指定 generatorConfig.xml 配置文件的路径
-      String classpath = ResourceUtils.getFile("classpath:").getAbsolutePath();
+      ClassPathResource resource = new ClassPathResource("");
+      String classpath = resource.getFile().getAbsolutePath();
       String configFilePath = Paths.get(classpath, "generatorConfig.xml").toString();
+
+      System.out.println(configFilePath);
 
       // 准备 MyBatis Generator 的配置
       List<String> warnings = new ArrayList<>();
@@ -310,7 +314,8 @@ public class CustomizedPlugin extends PluginAdapter {
     try {
       // 指定 generatorConfig.xml 配置文件的路径
 
-      String classpath = ResourceUtils.getFile("classpath:").getAbsolutePath();
+      ClassPathResource resource = new ClassPathResource("");
+      String classpath = resource.getFile().getAbsolutePath();
       String configFilePath = Paths.get(classpath, "generatorConfig.xml").toString();
 
       System.out.println(classpath);

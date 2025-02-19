@@ -74,14 +74,10 @@ public class BaseServicePlugin extends PluginAdapter {
         topLevelClass.addJavaDocLine(" * This is a generated BaseService for demonstration purposes.");
         topLevelClass.addJavaDocLine(" */");
 
-        topLevelClass.addStaticImport("org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn");
-        topLevelClass.addStaticImport("org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo");
 
-        //topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.bind.annotation.DeleteMapping"));
-        //topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.bind.annotation.GetMapping"));
+
+        topLevelClass.addImportedType(new FullyQualifiedJavaType("jakarta.annotation.Resource"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.bind.annotation.PathVariable"));
-        //topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.bind.annotation.PostMapping"));
-        //topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.bind.annotation.PutMapping"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.web.bind.annotation.RequestBody"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.stereotype.Service"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType(modelClassName));
@@ -102,32 +98,32 @@ public class BaseServicePlugin extends PluginAdapter {
         var field = new Field ("repository", new FullyQualifiedJavaType(_modelName + "Repository"));
         field.setVisibility(JavaVisibility.PRIVATE);
         field.addJavaDocLine("/** This is an example repository. */");
-        //field.addAnnotation("@Autowired");
+        field.addAnnotation("@Resource");
         topLevelClass.addField(field);
 
         // Add a private field
-        var field2 = new Field ("assembler", new FullyQualifiedJavaType(_modelName + "ModelAssembler"));
-        field2.setVisibility(JavaVisibility.PRIVATE);
-        field2.addJavaDocLine("/** This is an example modelAssembler. */");
-        //field2.addAnnotation("@Autowired");
-        topLevelClass.addField(field2);
+        // var field2 = new Field ("assembler", new FullyQualifiedJavaType(_modelName + "ModelAssembler"));
+        // field2.setVisibility(JavaVisibility.PRIVATE);
+        // field2.addJavaDocLine("/** This is an example modelAssembler. */");
+        // //field2.addAnnotation("@Autowired");
+        // topLevelClass.addField(field2);
 
         Method _defaultconstructor = new Method(_modelName + "BaseService");
         _defaultconstructor.setConstructor(true);
         _defaultconstructor.setVisibility(JavaVisibility.PUBLIC);
         topLevelClass.addMethod(_defaultconstructor);
 
-        Method _constructor = new Method(_modelName + "BaseService");
-        _constructor.setConstructor(true);
-        _constructor.setVisibility(JavaVisibility.PUBLIC);
-        _constructor.addAnnotation("@Autowired");
-        //String newModelName = "new" + _modelName;
-        Parameter parameter  = new Parameter(new FullyQualifiedJavaType(_modelName + "Repository"), "repository");
-        _constructor.addParameter(parameter);
-        _constructor.addParameter(new Parameter(new FullyQualifiedJavaType(_modelName + "ModelAssembler"), "assembler"));
-        _constructor.addBodyLine("this.repository = repository;");
-        _constructor.addBodyLine("this.assembler = assembler;");
-        topLevelClass.addMethod(_constructor);
+        // Method _constructor = new Method(_modelName + "BaseService");
+        // _constructor.setConstructor(true);
+        // _constructor.setVisibility(JavaVisibility.PUBLIC);
+        // _constructor.addAnnotation("@Autowired");
+        // //String newModelName = "new" + _modelName;
+        // Parameter parameter  = new Parameter(new FullyQualifiedJavaType(_modelName + "Repository"), "repository");
+        // _constructor.addParameter(parameter);
+        // // _constructor.addParameter(new Parameter(new FullyQualifiedJavaType(_modelName + "ModelAssembler"), "assembler"));
+        // _constructor.addBodyLine("this.repository = repository;");
+        // // _constructor.addBodyLine("this.assembler = assembler;");
+        // topLevelClass.addMethod(_constructor);
 
         Method _getAll = new Method("all");
         //_getAll.addAnnotation(String.format("@GetMapping(\"/all_%s\")", _modelName.toLowerCase()));
@@ -153,7 +149,7 @@ public class BaseServicePlugin extends PluginAdapter {
         //_saveNew.addAnnotation(String.format("@PostMapping(\"/%s\")", _modelName.toLowerCase()));
         _saveNew.setVisibility(JavaVisibility.PUBLIC);
         //String newModelName = "new" + _modelName;
-        parameter  = new Parameter(new FullyQualifiedJavaType(modelClassName), "new" + _modelName);
+        Parameter parameter  = new Parameter(new FullyQualifiedJavaType(modelClassName), "new" + _modelName);
         parameter.addAnnotation("@RequestBody");
         _saveNew.addParameter(parameter);
         _saveNew.setReturnType(new FullyQualifiedJavaType(modelClassName));
@@ -183,8 +179,6 @@ public class BaseServicePlugin extends PluginAdapter {
         Method _replace = new Method("replace" + _modelName);
         //_replace.addAnnotation(String.format("@PutMapping(\"/%s/{id}\")", _modelName.toLowerCase()));
         _replace.setVisibility(JavaVisibility.PUBLIC);
-        _entityType = new FullyQualifiedJavaType("org.springframework.hateoas.EntityModel");
-        _entityType.addTypeArgument(new FullyQualifiedJavaType(modelClassName));
         parameter  = new Parameter(new FullyQualifiedJavaType(modelClassName), "new" + _modelName);
         parameter.addAnnotation("@RequestBody");
         _replace.addParameter(parameter);
@@ -197,11 +191,10 @@ public class BaseServicePlugin extends PluginAdapter {
         _replace.setReturnType(_retType);
         String[] strParameter3 = {String.format("%s _updateModel = repository.findById(id)", _modelName, _modelName.toLowerCase()), 
                                     String.format(".map(%s -> {", "_new" + _modelName),
-                                    "//_newTestUser.setId(newTestUser.getId());",
+                                    String.format("ObjectAssigner.assignNonNullValues(%s, %s);", "new" + _modelName, "_new" + _modelName),
                                     String.format("return repository.save(%s);", "_new" + _modelName),
                                     "})",
                                     String.format(".orElseThrow(() -> new %sNotFoundException(id));", _modelName),
-                                    String.format("%s entityModel = assembler.toModel(_updateModel);", _entityType.getShortName()),
                                     "return _updateModel;"};
         // 将数组转换为 List<String>
         List<String> stringList3 = Arrays.asList(strParameter3);

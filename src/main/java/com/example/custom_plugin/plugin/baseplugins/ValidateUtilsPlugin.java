@@ -18,18 +18,18 @@ import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.api.dom.java.TypeParameter;
 
-public class StringUitlsPlugin extends PluginAdapter {
+public class ValidateUtilsPlugin extends PluginAdapter {
 
   private String targetPackage;
 
   private Properties properties;
 
-  public StringUitlsPlugin(Properties properties) {
+  public ValidateUtilsPlugin(Properties properties) {
     super();
     this.properties = properties;
   }
 
-  public StringUitlsPlugin() {
+  public ValidateUtilsPlugin() {
     super();
   }
 
@@ -68,7 +68,7 @@ public class StringUitlsPlugin extends PluginAdapter {
     // String interfaceName =
     // introspectedTable.getFullyQualifiedTable().getDomainObjectName() +
     // modelClassName;
-    TopLevelClass topLevelClass = new TopLevelClass(packageName + "." + "StringUitls");
+    TopLevelClass topLevelClass = new TopLevelClass(packageName + "." + "ValidateUtils");
     topLevelClass.setVisibility(JavaVisibility.PUBLIC);
 
     // Add class documentation
@@ -87,7 +87,7 @@ public class StringUitlsPlugin extends PluginAdapter {
     topLevelClass.addField(field);
 
 
-    Method _defaultconstructor = new Method("StringUitls");
+    Method _defaultconstructor = new Method("ValidateUtils");
     _defaultconstructor.setConstructor(true);
     _defaultconstructor.setVisibility(JavaVisibility.PUBLIC);
     topLevelClass.addMethod(_defaultconstructor);

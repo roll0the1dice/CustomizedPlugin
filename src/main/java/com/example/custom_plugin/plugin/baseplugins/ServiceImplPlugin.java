@@ -68,6 +68,7 @@ public class ServiceImplPlugin extends PluginAdapter {
         topLevelClass.addJavaDocLine(" * This is a generated Service for demonstration purposes.");
         topLevelClass.addJavaDocLine(" */");
 
+        topLevelClass.addImportedType(new FullyQualifiedJavaType("jakarta.annotation.Resource"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.stereotype.Service"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType(packageName + "." + _modelName + "BaseService"));
         topLevelClass.addImportedType(new FullyQualifiedJavaType(packageName + "." + _modelName + "Service"));
@@ -79,18 +80,11 @@ public class ServiceImplPlugin extends PluginAdapter {
         topLevelClass.addSuperInterface(new FullyQualifiedJavaType(packageName + "." + _modelName + "Service"));
 
         // Add a private field
-        var field = new Field ("repository", new FullyQualifiedJavaType(_modelName + "Repository"));
+        var field = new Field (_modelName.toLowerCase() + "Repository", new FullyQualifiedJavaType(_modelName + "Repository"));
         field.setVisibility(JavaVisibility.PRIVATE);
         field.addJavaDocLine("/** This is an example repository. */");
-        //field.addAnnotation("@Autowired");
+        field.addAnnotation("@Resource");
         topLevelClass.addField(field);
-
-        // Add a private field
-        var field2 = new Field ("assembler", new FullyQualifiedJavaType(_modelName + "ModelAssembler"));
-        field2.setVisibility(JavaVisibility.PRIVATE);
-        field2.addJavaDocLine("/** This is an example modelAssembler. */");
-        //field2.addAnnotation("@Autowired");
-        topLevelClass.addField(field2);
 
         Method _defaultconstructor = new Method(_modelName + "ServiceImpl");
         _defaultconstructor.setConstructor(true);
@@ -98,18 +92,16 @@ public class ServiceImplPlugin extends PluginAdapter {
         _defaultconstructor.addBodyLine("super();");
         topLevelClass.addMethod(_defaultconstructor);
 
-        Method _constructor = new Method(_modelName + "ServiceImpl");
-        _constructor.setConstructor(true);
-        _constructor.setVisibility(JavaVisibility.PUBLIC);
-        _constructor.addAnnotation("@Autowired");
+        // Method _constructor = new Method(_modelName + "ServiceImpl");
+        // _constructor.setConstructor(true);
+        // _constructor.setVisibility(JavaVisibility.PUBLIC);
+        // _constructor.addAnnotation("@Autowired");
         //String newModelName = "new" + _modelName;
-        Parameter parameter  = new Parameter(new FullyQualifiedJavaType(_modelName + "Repository"), "repository");
-        _constructor.addParameter(parameter);
-        _constructor.addParameter(new Parameter(new FullyQualifiedJavaType(_modelName + "ModelAssembler"), "assembler"));
-        _constructor.addBodyLine("super(repository,assembler);");
-        _constructor.addBodyLine("this.repository = repository;");
-        _constructor.addBodyLine("this.assembler = assembler;");
-        topLevelClass.addMethod(_constructor);
+        // Parameter parameter  = new Parameter(new FullyQualifiedJavaType(_modelName + "Repository"), "repository");
+        // _constructor.addParameter(parameter);
+        // _constructor.addBodyLine("super(repository);");
+        // _constructor.addBodyLine("this.repository = repository;");
+        // topLevelClass.addMethod(_constructor);
 
 
         // Use DefaultJavaFormatter to format the generated Java file

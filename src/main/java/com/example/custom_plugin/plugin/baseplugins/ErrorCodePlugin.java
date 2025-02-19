@@ -117,6 +117,13 @@ public class ErrorCodePlugin extends PluginAdapter {
     getStatusCodeValue.setReturnType(new FullyQualifiedJavaType("java.lang.Integer"));
     topLevelEnumeration.addMethod(getStatusCodeValue);
 
+    Method toString = new Method("toString");
+    toString.addAnnotation("@Override");
+    toString.setVisibility(JavaVisibility.PUBLIC);
+    toString.addBodyLine("return String.format(\"Code = %s, Message = %s\",statusCodeValue,statusCode);");
+    toString.setReturnType(new FullyQualifiedJavaType("java.lang.String"));
+    topLevelEnumeration.addMethod(toString);
+
     // Use DefaultJavaFormatter to format the generated Java file
     DefaultJavaFormatter javaFormatter = new DefaultJavaFormatter();
     GeneratedJavaFile generatedJavaFile = new GeneratedJavaFile(topLevelEnumeration, "src/main/java", javaFormatter);

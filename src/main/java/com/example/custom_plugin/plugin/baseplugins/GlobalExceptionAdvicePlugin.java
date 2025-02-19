@@ -91,7 +91,7 @@ public class GlobalExceptionAdvicePlugin extends PluginAdapter {
         topLevelClass.addMethod(_notFoundHandler);
 
         Method _badRequestExceptionHandler = new Method("GlobalExceptionAdvice");
-        FullyQualifiedJavaType _badRequestExceptionType =  new FullyQualifiedJavaType("BadRequestException");
+        FullyQualifiedJavaType _badRequestExceptionType =  new FullyQualifiedJavaType("BusinessException");
         _badRequestExceptionHandler.addAnnotation(String.format("@ExceptionHandler(%s.class)", _badRequestExceptionType.getFullyQualifiedName()));
         _badRequestExceptionHandler.setVisibility(JavaVisibility.PUBLIC);
         parameter  = new Parameter(_badRequestExceptionType, "ex");
@@ -129,6 +129,16 @@ public class GlobalExceptionAdvicePlugin extends PluginAdapter {
         _missingServletRequestParameterExceptionHandler.setReturnType(_retType);
         _missingServletRequestParameterExceptionHandler.addBodyLine("return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(\"Invalid Input Error: \" + ex.getMessage());");
         topLevelClass.addMethod(_missingServletRequestParameterExceptionHandler);
+
+        Method _noSuchElementExceptionHandler = new Method("GlobalExceptionAdvice");
+        FullyQualifiedJavaType _noSuchElementExceptionHandlerType =  new FullyQualifiedJavaType("java.util.NoSuchElementException");
+        _noSuchElementExceptionHandler.addAnnotation(String.format("@ExceptionHandler(%s.class)", _noSuchElementExceptionHandlerType.getFullyQualifiedName()));
+        _noSuchElementExceptionHandler.setVisibility(JavaVisibility.PUBLIC);
+        parameter  = new Parameter(_noSuchElementExceptionHandlerType, "ex");
+        _noSuchElementExceptionHandler.addParameter(parameter);
+        _noSuchElementExceptionHandler.setReturnType(_retType);
+        _noSuchElementExceptionHandler.addBodyLine("return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(\"Invalid Input Error: \" + ex.getMessage());");
+        topLevelClass.addMethod(_noSuchElementExceptionHandler);
 
         // Use DefaultJavaFormatter to format the generated Java file
         DefaultJavaFormatter javaFormatter = new DefaultJavaFormatter();

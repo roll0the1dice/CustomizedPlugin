@@ -14,17 +14,17 @@ import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 
-public class BadRequestExceptionPlugin extends PluginAdapter {
+public class BusinessExceptionPlugin extends PluginAdapter {
     private String targetPackage;
 
     private Properties properties;
 
-    public BadRequestExceptionPlugin(Properties properties) {
+    public BusinessExceptionPlugin(Properties properties) {
         super();
         this.properties = properties;
     }
 
-    public BadRequestExceptionPlugin() {
+    public BusinessExceptionPlugin() {
         super();
     }
 
@@ -56,7 +56,7 @@ public class BadRequestExceptionPlugin extends PluginAdapter {
         // String interfaceName = introspectedTable.getFullyQualifiedTable().getDomainObjectName() + modelClassName;
         // System.out.println(packageName);
         // System.out.println(modelClassName);
-        TopLevelClass topLevelClass = new TopLevelClass(packageName + "." + "BadRequestException");
+        TopLevelClass topLevelClass = new TopLevelClass(packageName + "." + "BusinessException");
         topLevelClass.setVisibility(JavaVisibility.PUBLIC);
 
         // Add class documentation
@@ -68,18 +68,26 @@ public class BadRequestExceptionPlugin extends PluginAdapter {
 
         topLevelClass.setSuperClass(new FullyQualifiedJavaType("java.lang.RuntimeException"));
 
-        Method _defaultconstructor = new Method("BadRequestException");
+        Method _defaultconstructor = new Method("BusinessException");
         _defaultconstructor.setConstructor(true);
         _defaultconstructor.setVisibility(JavaVisibility.PUBLIC);
         topLevelClass.addMethod(_defaultconstructor);
 
-        Method _constructor = new Method("BadRequestException");
+        Method _constructor = new Method("BusinessException");
         _constructor.setConstructor(true);
         _constructor.setVisibility(JavaVisibility.PUBLIC);
         Parameter parameter  = new Parameter(new FullyQualifiedJavaType("java.lang.String"), "message");
         _constructor.addParameter(parameter);
         _constructor.addBodyLine("super(message);");
         topLevelClass.addMethod(_constructor);
+
+        Method _constructorWithTwoParameters = new Method("BusinessException");
+        _constructorWithTwoParameters.setConstructor(true);
+        _constructorWithTwoParameters.setVisibility(JavaVisibility.PUBLIC);
+        _constructorWithTwoParameters.addParameter(new Parameter(new FullyQualifiedJavaType("java.lang.Integer"), "code"));
+        _constructorWithTwoParameters.addParameter(new Parameter(new FullyQualifiedJavaType("java.lang.String"), "message"));
+        _constructorWithTwoParameters.addBodyLine("super(String.format(\"Code = %s, Message = %s\",code,message));");
+        topLevelClass.addMethod(_constructorWithTwoParameters);
 
 
         // Use DefaultJavaFormatter to format the generated Java file

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 import org.mybatis.generator.api.GeneratedJavaFile;
 import org.mybatis.generator.api.IntrospectedTable;
@@ -16,22 +17,25 @@ import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StopWatch;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-public class AuthInterceptorPlugin extends PluginAdapter {
+public class LogInterceptorPlugin extends PluginAdapter {
   private String targetPackage;
 
   private Properties properties;
 
-  public AuthInterceptorPlugin(Properties properties) {
+  public LogInterceptorPlugin(Properties properties) {
     super();
     this.properties = properties;
   }
 
-  public AuthInterceptorPlugin() {
+  public LogInterceptorPlugin() {
     super();
   }
 
@@ -64,9 +68,15 @@ public class AuthInterceptorPlugin extends PluginAdapter {
     // introspectedTable.getFullyQualifiedTable().getDomainObjectName() +
     // modelClassName;
 
-    TopLevelClass topLevelClass = new TopLevelClass(packageName + "." + "AuthInterceptor");
+    TopLevelClass topLevelClass = new TopLevelClass(packageName + "." + "LogInterceptor");
     topLevelClass.setVisibility(JavaVisibility.PUBLIC);
 
+    topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.http.ResponseEntity"));
+    topLevelClass.addImportedType(new FullyQualifiedJavaType("org.springframework.util.StopWatch"));
+    topLevelClass.addImportedType(new FullyQualifiedJavaType("org.apache.commons.lang3.StringUtils"));
+    topLevelClass.addImportedType(new FullyQualifiedJavaType("cn.dev33.satoken.stp.StpUtil"));
+    topLevelClass.addImportedType(new FullyQualifiedJavaType("lombok.extern.slf4j.Slf4j"));
+    topLevelClass.addImportedType(new FullyQualifiedJavaType("java.util.UUID"));
     topLevelClass.addImportedType(new FullyQualifiedJavaType("org.aspectj.lang.ProceedingJoinPoint"));
     topLevelClass.addImportedType(new FullyQualifiedJavaType("org.aspectj.lang.annotation.Around"));
     topLevelClass.addImportedType(new FullyQualifiedJavaType("org.aspectj.lang.annotation.Aspect"));
@@ -91,6 +101,7 @@ public class AuthInterceptorPlugin extends PluginAdapter {
 
     topLevelClass.addAnnotation("@Aspect");
     topLevelClass.addAnnotation("@Component");
+    topLevelClass.addAnnotation("@Slf4j");
 
     var field = new Field("userService", new FullyQualifiedJavaType(_modelName + "ServiceImpl"));
     field.setVisibility(JavaVisibility.PRIVATE);
@@ -100,50 +111,34 @@ public class AuthInterceptorPlugin extends PluginAdapter {
 
     Method _doInterceptor = new Method("doInterceptor");
     _doInterceptor.setVisibility(JavaVisibility.PUBLIC);
-    _doInterceptor.addJavaDocLine("/**");
-    _doInterceptor.addJavaDocLine("* UseCase: ");
-    _doInterceptor.addJavaDocLine("* @WithAuth(mustRole = UserRoleEnum.USER) ");
-    _doInterceptor.addJavaDocLine("* public String getMethodName(@RequestParam String param) {");
-    _doInterceptor.addJavaDocLine("*        return new String();");
-    _doInterceptor.addJavaDocLine("* }");
-    _doInterceptor.addJavaDocLine("*/");
-    _doInterceptor.addAnnotation("@Around(\"@annotation(withAuth)\")");
+    _doInterceptor.addAnnotation("@Around(\"execution(* com.example.testplugin.generatedJavaFiles.*.*(..))\")");
     Parameter page = new Parameter(new FullyQualifiedJavaType("org.aspectj.lang.ProceedingJoinPoint"), "joinPoint");
-    Parameter size = new Parameter(new FullyQualifiedJavaType(packageName + "." + "WithAuth"), "withAuth");
     _doInterceptor.addParameter(page);
-    _doInterceptor.addParameter(size);
     _doInterceptor.setReturnType(new FullyQualifiedJavaType("java.lang.Object"));
     String[] _tmpParameters = {
+        "StopWatch stopWatch = new StopWatch();",
+        "stopWatch.start();",
         "RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();",
-        "HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();",
-        "//if (userService.getCurrent(request) == null)",
-        "//throw new BadRequestException(\"User session not found\");",
-        "UserRoleEnum mustRoleEnum = withAuth.mustRole();",
-        "try {",
-        "if (mustRoleEnum == null) {",
-        "return joinPoint.proceed();",
-        "}",
-        "}catch (Throwable e) {",
-        "throw new RuntimeException(\"Internal Server Error\");",
-        "}",
-        "UserRoleEnum userRoleEnum = UserRoleEnum.USER;",
-        "//userRoleEnum = users.getUserRole();",
-        "if (userRoleEnum == null) {",
-        "throw new BusinessException(\"Permission denied\");",
-        "}",
-        "if (UserRoleEnum.BAN.equals(userRoleEnum)) {",
-        "throw new BusinessException(\"Permission denied\");",
-        "}",
-        "if (UserRoleEnum.ADMIN.equals(mustRoleEnum)) {",
-        "if (!UserRoleEnum.ADMIN.equals(userRoleEnum)) {",
-        "throw new BusinessException(\"Permission denied\");",
-        "}",
+        "HttpServletRequest httpServletRequest = ((ServletRequestAttributes) requestAttributes).getRequest();",
+        "String requestId = UUID.randomUUID().toString();",
+        "String url = httpServletRequest.getRequestURI();",
+        "Object[] args = joinPoint.getArgs();",
+        "String reqParam = \"[\" + StringUtils.join(args, \", \") + \"]\";",
+        "log.info(\"request start，id: {}, path: {}, ip: {}, params: {}\", requestId, url,",
+        "httpServletRequest.getRemoteHost(), reqParam);",
+        "if (!\"/users/doLogin\".equals(url) && !StpUtil.isLogin()) {",
+        "return ResponseEntity.badRequest().body(\"Bad Request Error: \" + ErrorCode.NOT_LOGIN_ERROR.toString());",
         "}",
         "try {",
-        "return joinPoint.proceed();",
+        "Object result = joinPoint.proceed();",
+        "stopWatch.stop();",
+        "long totalTimeMillis = stopWatch.getTotalTimeMillis();",
+        "log.info(\"request end, id: {}, cost: {}ms\", requestId, totalTimeMillis);",
+        "return result;",
         "}catch (Throwable e) {",
         "throw new RuntimeException(\"Internal Server Error\");",
-        "}" };
+        "}"
+    };
     List<String> _tmpstringList = Arrays.asList(_tmpParameters);
     Collection<String> _tmpstringCollection = _tmpstringList;
     _doInterceptor.addBodyLines(_tmpstringCollection);

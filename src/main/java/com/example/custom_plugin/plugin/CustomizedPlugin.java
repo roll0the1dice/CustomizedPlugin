@@ -27,7 +27,7 @@ public class CustomizedPlugin extends PluginAdapter {
   RepositoryPlugin repositoryPlugin;
   NotFoundExceptionPlugin notFoundExceptionPlugin;
   NotFoundAdvicePlugin notFoundAdvicePlugin;
-  ModelAssemblerPlugin modelAssemblerPlugin;
+  // ModelAssemblerPlugin modelAssemblerPlugin;
   BaseServicePlugin baseServicePlugin;
   ServicePlugin servicePlugin;
   ServiceImplPlugin serviceImplPlugin;
@@ -35,7 +35,7 @@ public class CustomizedPlugin extends PluginAdapter {
   CustomSpecsPlugin customSpecsPlugin;
   GlobalExceptionAdvicePlugin globalExceptionAdvicePlugin;
   ApiResponsePlugin apiResponsePlugin;
-  BadRequestExceptionPlugin serverExceptionPlugin;
+  BusinessExceptionPlugin serverExceptionPlugin;
   CustomPageImplPlugin customPageImplPlugin;
   WebConfigPlugin webConfigPlugin;
   UserRoleEnumPlugin userRoleEnumPlugin;
@@ -44,16 +44,19 @@ public class CustomizedPlugin extends PluginAdapter {
   SnowflakeIdGeneratorImplPlugin snowflakeIdGeneratorImplPlugin;
   SnowflakeIdGeneratorPlugin snowflakeIdGeneratorPlugin;
   ErrorCodePlugin errorCodePlugin;
-  StringUitlsPlugin stringUitlsPlugin;
+  ValidateUtilsPlugin stringUitlsPlugin;
   GlobalConstantPlugin globalConstantPlugin;
   RequestDTOPlugin requestDTOPlugin;
+  ThrowUtilsPlugin throwUtilsPlugin;
+  LogInterceptorPlugin logInterceptorPlugin;
+  ObjectAssignerPlugin objectAssignerPlugin;
 
   public CustomizedPlugin() {
     super();
     repositoryPlugin = new RepositoryPlugin(properties);
     notFoundExceptionPlugin = new NotFoundExceptionPlugin(properties);
     notFoundAdvicePlugin = new NotFoundAdvicePlugin(properties);
-    modelAssemblerPlugin = new ModelAssemblerPlugin(properties);
+    // modelAssemblerPlugin = new ModelAssemblerPlugin(properties);
     baseServicePlugin = new BaseServicePlugin(properties);
     servicePlugin = new ServicePlugin(properties);
     serviceImplPlugin = new ServiceImplPlugin(properties);
@@ -61,7 +64,7 @@ public class CustomizedPlugin extends PluginAdapter {
     customSpecsPlugin = new CustomSpecsPlugin(properties);
     globalExceptionAdvicePlugin = new GlobalExceptionAdvicePlugin(properties);
     apiResponsePlugin = new ApiResponsePlugin(properties);
-    serverExceptionPlugin = new BadRequestExceptionPlugin(properties);
+    serverExceptionPlugin = new BusinessExceptionPlugin(properties);
     customPageImplPlugin = new CustomPageImplPlugin(properties);
     webConfigPlugin = new WebConfigPlugin(properties);
     userRoleEnumPlugin = new UserRoleEnumPlugin(properties);
@@ -70,16 +73,20 @@ public class CustomizedPlugin extends PluginAdapter {
     snowflakeIdGeneratorImplPlugin = new SnowflakeIdGeneratorImplPlugin(properties);
     snowflakeIdGeneratorPlugin = new SnowflakeIdGeneratorPlugin(properties);
     errorCodePlugin = new ErrorCodePlugin(properties);
-    stringUitlsPlugin = new StringUitlsPlugin(properties);
+    stringUitlsPlugin = new ValidateUtilsPlugin(properties);
     globalConstantPlugin = new GlobalConstantPlugin(properties);
     requestDTOPlugin = new RequestDTOPlugin(properties);
+    throwUtilsPlugin = new ThrowUtilsPlugin(properties);
+    logInterceptorPlugin = new LogInterceptorPlugin(properties);
+    objectAssignerPlugin = new ObjectAssignerPlugin(properties);
+
   }
 
   public boolean validate(List<String> warnings) {
     return repositoryPlugin.validate(warnings) &&
         notFoundExceptionPlugin.validate(warnings) &&
         notFoundAdvicePlugin.validate(warnings) &&
-        modelAssemblerPlugin.validate(warnings) &&
+        // modelAssemblerPlugin.validate(warnings) &&
         baseServicePlugin.validate(warnings) &&
         servicePlugin.validate(warnings) &&
         serviceImplPlugin.validate(warnings) &&
@@ -98,7 +105,10 @@ public class CustomizedPlugin extends PluginAdapter {
         errorCodePlugin.validate(warnings) &&
         stringUitlsPlugin.validate(warnings) &&
         globalConstantPlugin.validate(warnings) &&
-        requestDTOPlugin.validate(warnings);
+        requestDTOPlugin.validate(warnings) &&
+        throwUtilsPlugin.validate(warnings) &&
+        logInterceptorPlugin.validate(warnings) &&
+        objectAssignerPlugin.validate(warnings);
   }
 
   @Override
@@ -187,9 +197,9 @@ public class CustomizedPlugin extends PluginAdapter {
         .contextGenerateAdditionalJavaFiles(introspectedTable);
     additionalFiles.addAll(notFoundAdvicePluginFiles);
 
-    List<GeneratedJavaFile> modelAssemblerPluginFiles = modelAssemblerPlugin
-        .contextGenerateAdditionalJavaFiles(introspectedTable);
-    additionalFiles.addAll(modelAssemblerPluginFiles);
+    // List<GeneratedJavaFile> modelAssemblerPluginFiles = modelAssemblerPlugin
+    // .contextGenerateAdditionalJavaFiles(introspectedTable);
+    // additionalFiles.addAll(modelAssemblerPluginFiles);
 
     List<GeneratedJavaFile> baseServicePluginFiles = baseServicePlugin
         .contextGenerateAdditionalJavaFiles(introspectedTable);
@@ -266,6 +276,18 @@ public class CustomizedPlugin extends PluginAdapter {
     List<GeneratedJavaFile> globalConstantPluginfiles = globalConstantPlugin
         .contextGenerateAdditionalJavaFiles(introspectedTable);
     additionalFiles.addAll(globalConstantPluginfiles);
+
+    List<GeneratedJavaFile> throwUtilsPluginfiles = throwUtilsPlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(throwUtilsPluginfiles);
+
+    List<GeneratedJavaFile> logInterceptorPluginfiles = logInterceptorPlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(logInterceptorPluginfiles);
+
+    List<GeneratedJavaFile> objectAssignerPluginfiles = objectAssignerPlugin
+        .contextGenerateAdditionalJavaFiles(introspectedTable);
+    additionalFiles.addAll(objectAssignerPluginfiles);
 
     return additionalFiles;
   }
